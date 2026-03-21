@@ -14,8 +14,10 @@ Este repositório organiza o trabalho técnico e acadêmico do projeto integrado
 ## Navegação rápida
 
 - `README.md`: visão geral do projeto, escopo, objetivos e forma de execução.
+- `CONTRIBUTING.md`: convenções para evolução do repositório e organização das contribuições.
 - `docs/ENTREGAVEIS.md`: detalhamento dos entregáveis, critérios de aceite e artefatos esperados.
 - `docs/PLANO_DE_EXECUCAO.md`: plano operacional de evolução do projeto por etapas.
+- `docs/ARQUITETURA.md`: visão da arquitetura lógica, camadas da pipeline e responsabilidades.
 - `data/README.md`: contrato de uso dos diretórios de dados.
 - `notebooks/README.md`: planejamento dos notebooks e sua função no projeto.
 - `reports/README.md`: organização das evidências analíticas e materiais de defesa.
@@ -162,7 +164,9 @@ Os entregáveis foram refinados em trilhas separadas de execução, documentaç�
 
 ```text
 mediapipe-seguranca/
+├── CONTRIBUTING.md
 ├── docs/
+│   ├── ARQUITETURA.md
 │   ├── ENTREGAVEIS.md
 │   └── PLANO_DE_EXECUCAO.md
 ├── data/
