@@ -191,6 +191,43 @@ Atualmente o repositório está em fase inicial de estruturação, com base conc
 4. integrar a extração com MediaPipe;
 5. iniciar a geração da base analítica para EDA e modelagem.
 
+## Estrutura inicial criada
+
+Além da documentação, o repositório já conta com uma base executável em Python:
+
+- `main.py`: ponto de entrada para rodar a pipeline demo.
+- `src/mediapipe_seguranca/`: pacote com ingestão sintética, extração simulada, features e baselines.
+- `tests/test_pipeline.py`: teste básico da pipeline inicial.
+- `requirements.txt`: dependências mínimas para a base analítica.
+- `data/`, `notebooks/` e `reports/`: diretórios preparados para evolução do projeto.
+
+## Como executar
+
+1. Crie e ative um ambiente virtual Python.
+2. Instale as dependências.
+3. Rode a pipeline demo para gerar uma base inicial em `data/processed/`.
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python main.py
+```
+
+## Como testar
+
+```powershell
+python -m unittest discover -s tests -v
+```
+
+## Próximos incrementos sugeridos
+
+- substituir a extração simulada por leitura real de vídeo com `opencv-python`;
+- integrar detectores do MediaPipe conforme os modelos escolhidos;
+- criar notebooks de EDA, clusterização e classificação;
+- adicionar ingestão de rótulos reais em `data/labels/`.
+
 ## Referências iniciais
 
 - Google AI Edge — MediaPipe Solutions Guide
