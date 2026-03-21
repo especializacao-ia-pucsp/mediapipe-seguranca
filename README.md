@@ -15,6 +15,7 @@ Este repositório organiza o trabalho técnico e acadêmico do projeto integrado
 
 - `README.md`: visão geral do projeto, escopo, objetivos e forma de execução.
 - `CONTRIBUTING.md`: convenções para evolução do repositório e organização das contribuições.
+- `docs/DICIONARIO_DE_DADOS.md`: definição das features, agregações e rótulos esperados.
 - `docs/ENTREGAVEIS.md`: detalhamento dos entregáveis, critérios de aceite e artefatos esperados.
 - `docs/PLANO_DE_EXECUCAO.md`: plano operacional de evolução do projeto por etapas.
 - `docs/ARQUITETURA.md`: visão da arquitetura lógica, camadas da pipeline e responsabilidades.
@@ -167,6 +168,7 @@ mediapipe-seguranca/
 ├── CONTRIBUTING.md
 ├── docs/
 │   ├── ARQUITETURA.md
+│   ├── DICIONARIO_DE_DADOS.md
 │   ├── ENTREGAVEIS.md
 │   └── PLANO_DE_EXECUCAO.md
 ├── data/
