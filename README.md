@@ -19,6 +19,7 @@ Este repositório organiza o trabalho técnico e acadêmico do projeto integrado
 - `docs/ENTREGAVEIS.md`: detalhamento dos entregáveis, critérios de aceite e artefatos esperados.
 - `docs/PLANO_DE_EXECUCAO.md`: plano operacional de evolução do projeto por etapas.
 - `docs/ARQUITETURA.md`: visão da arquitetura lógica, camadas da pipeline e responsabilidades.
+- `docs/ROADMAP.md`: fases, dependências, marcos e prioridades de evolução do projeto.
 - `data/README.md`: contrato de uso dos diretórios de dados.
 - `notebooks/README.md`: planejamento dos notebooks e sua função no projeto.
 - `reports/README.md`: organização das evidências analíticas e materiais de defesa.
@@ -170,7 +171,8 @@ mediapipe-seguranca/
 │   ├── ARQUITETURA.md
 │   ├── DICIONARIO_DE_DADOS.md
 │   ├── ENTREGAVEIS.md
-│   └── PLANO_DE_EXECUCAO.md
+│   ├── PLANO_DE_EXECUCAO.md
+│   └── ROADMAP.md
 ├── data/
 │   ├── raw/
 │   ├── interim/
