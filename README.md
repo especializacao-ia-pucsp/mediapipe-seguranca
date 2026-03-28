@@ -1,5 +1,9 @@
 # MediaPipe Segurança
 
+<p align="center">
+  <img src="docs/assets/logo.png" alt="MediaPipe Segurança" width="280">
+</p>
+
 [![CI](https://github.com/especializacao-ia-pucsp/mediapipe-seguranca/actions/workflows/ci.yml/badge.svg)](https://github.com/especializacao-ia-pucsp/mediapipe-seguranca/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/especializacao-ia-pucsp/mediapipe-seguranca/actions/workflows/codeql.yml/badge.svg)](https://github.com/especializacao-ia-pucsp/mediapipe-seguranca/actions/workflows/codeql.yml)
 
