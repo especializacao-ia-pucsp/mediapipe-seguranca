@@ -1,7 +1,7 @@
 # MediaPipe Segurança
 
-[![CI](https://github.com/piterpunk/mediapipe-seguranca/actions/workflows/ci.yml/badge.svg)](https://github.com/piterpunk/mediapipe-seguranca/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/piterpunk/mediapipe-seguranca/actions/workflows/codeql.yml/badge.svg)](https://github.com/piterpunk/mediapipe-seguranca/actions/workflows/codeql.yml)
+[![CI](https://github.com/especializacao-ia-pucsp/mediapipe-seguranca/actions/workflows/ci.yml/badge.svg)](https://github.com/especializacao-ia-pucsp/mediapipe-seguranca/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/especializacao-ia-pucsp/mediapipe-seguranca/actions/workflows/codeql.yml/badge.svg)](https://github.com/especializacao-ia-pucsp/mediapipe-seguranca/actions/workflows/codeql.yml)
 
 Projeto acadêmico voltado à extração de indicadores comportamentais em filmagens de segurança com **MediaPipe** e técnicas de **aprendizado de máquina**. A proposta transforma vídeos de CFTV em dados estruturados para análise de padrões, detecção de anomalias e classificação de eventos de risco em um contexto acadêmico e reprodutível.
 

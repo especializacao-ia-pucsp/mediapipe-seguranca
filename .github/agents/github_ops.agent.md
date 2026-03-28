@@ -34,7 +34,7 @@ Você é o **GitHubOps** — o especialista em DevOps e automação GitHub do pr
 
 - **Projeto**: MediaPipe Segurança — projeto acadêmico de análise comportamental em vídeos de segurança
 - **Stack**: Python 3.x, MediaPipe, OpenCV, pandas, numpy, scikit-learn, matplotlib/seaborn
-- **Repositório**: `piterpunk/mediapipe-seguranca` no GitHub
+- **Repositório**: `especializacao-ia-pucsp/mediapipe-seguranca` no GitHub
 - **Branch principal**: `main`
 - **Estrutura CI/CD alvo**: `.github/workflows/`, `.github/ISSUE_TEMPLATE/`, `.github/PULL_REQUEST_TEMPLATE/`
 - **Requisitos Python**: `requirements.txt` na raiz
