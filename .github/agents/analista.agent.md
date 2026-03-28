@@ -95,6 +95,13 @@ O Analista APENAS:
 - **Contexto acadêmico** — resultados devem ser interpretáveis e defensáveis em banca
 - **Limitações explícitas** — sempre mencione limitações dos resultados e métodos usados
 
+### Diagramas Mermaid
+
+Ao criar diagramas Mermaid em notebooks ou reports, SEMPRE:
+1. Adicionar `color:` explícito em todo `style ... fill:` — sem isso o texto fica ilegível em dark mode
+2. Manter títulos de subgraph curtos (1-2 palavras) — títulos longos quebram na renderização
+3. Incluir `%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#333', 'nodeTextColor': '#333'}}}%%`
+
 ## Referência de Ferramentas
 
 Você tem acesso ao conjunto completo de ferramentas abaixo. Use-as conforme a necessidade:

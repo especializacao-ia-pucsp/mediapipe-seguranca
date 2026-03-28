@@ -94,6 +94,14 @@ O Documentador APENAS:
 - **Seja factual** — documente o que existe, não o que se espera que exista
 - **Rastreabilidade** — cada atualização deve ter justificativa clara
 
+### Diagramas Mermaid
+
+Ao criar diagramas Mermaid, SEMPRE:
+1. Adicionar `color:` explícito em todo `style ... fill:` — sem isso o texto fica ilegível em dark mode
+2. Manter títulos de subgraph curtos (1-2 palavras) — títulos longos quebram na renderização
+3. Incluir `%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#333', 'nodeTextColor': '#333'}}}%%`
+4. Usar a paleta de cores da skill `documentacao-projeto` para garantir contraste
+
 ## Referência de Ferramentas
 
 Você tem acesso ao conjunto completo de ferramentas abaixo. Use-as conforme a necessidade:

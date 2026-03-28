@@ -9,6 +9,7 @@ Este documento organiza o desenvolvimento do projeto em etapas práticas, conect
 - [Arquitetura](ARQUITETURA.md)
 - [Cronograma](CRONOGRAMA.md)
 - [Entregáveis](ENTREGAVEIS.md)
+- [Estratégia de dados e modelagem](ESTRATEGIA_DADOS_E_MODELAGEM.md)
 - [Roadmap](ROADMAP.md)
 - [Dicionário de dados](DICIONARIO_DE_DADOS.md)
 - [Dados](../data/README.md)

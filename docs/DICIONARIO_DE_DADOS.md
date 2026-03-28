@@ -9,6 +9,7 @@ Este documento descreve os principais campos, métricas e rótulos previstos no 
 - [Arquitetura](ARQUITETURA.md)
 - [Cronograma](CRONOGRAMA.md)
 - [Entregáveis](ENTREGAVEIS.md)
+- [Estratégia de dados e modelagem](ESTRATEGIA_DADOS_E_MODELAGEM.md)
 - [Plano de execução](PLANO_DE_EXECUCAO.md)
 - [Roadmap](ROADMAP.md)
 - [Dados](../data/README.md)

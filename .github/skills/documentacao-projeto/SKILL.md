@@ -86,6 +86,58 @@ Workflow padronizado para manter a documentação do projeto MediaPipe Seguranç
 6. **Seja factual** — documente o que existe, não o que se espera que exista
 7. **Rastreabilidade** — cada atualização deve ter justificativa clara
 
+## Regras para Diagramas Mermaid
+
+Ao criar ou editar diagramas Mermaid em qualquer documento, siga estas regras obrigatórias:
+
+### Contraste de cores (OBRIGATÓRIO)
+
+Todo nó com `fill` customizado DEVE ter `color` explícito com contraste alto. Sem isso, o texto fica ilegível em dark mode.
+
+```
+❌ ERRADO — sem color, texto some em dark mode:
+style N1 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+
+✅ CORRETO — color escuro explícito:
+style N1 fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1b5e20
+```
+
+Paleta de cores seguras (fundo claro → texto escuro):
+
+| Fundo | Texto (`color`) | Borda (`stroke`) | Uso |
+|---|---|---|---|
+| `#e8f5e9` | `#1b5e20` | `#2e7d32` | Verde (sucesso, concluído) |
+| `#e3f2fd` | `#0d47a1` | `#1565c0` | Azul (informação, ativo) |
+| `#fff3e0` | `#bf360c` | `#e65100` | Laranja (aviso, pendente) |
+| `#f3e5f5` | `#4a148c` | `#6a1b9a` | Roxo (modelagem) |
+| `#fce4ec` | `#b71c1c` | `#c62828` | Vermelho (risco, erro) |
+| `#ECEFF1` | `#263238` | `#78909C` | Cinza (planejado) |
+
+Sempre adicione `%%{init}%%` com cores de texto seguras:
+```
+%%{init: {'theme': 'base', 'themeVariables': {'primaryTextColor': '#333', 'nodeTextColor': '#333', 'clusterBkg': '#fff', 'clusterBorder': '#666'}}}%%
+```
+
+### Títulos de subgraph (OBRIGATÓRIO)
+
+Títulos de subgraph DEVEM ser curtos (1-2 palavras). Títulos longos quebram na renderização.
+
+```
+❌ ERRADO — título longo que quebra:
+subgraph C1["Camada 1 — Dataset Principal de Treinamento"]
+
+✅ CORRETO — título curto, detalhes nos nós:
+subgraph C1["Principal"]
+    ST["ShanghaiTech Campus<br/>437 vídeos"]
+```
+
+### Checklist Mermaid
+
+- [ ] Todo `style ... fill:` tem `color:` correspondente
+- [ ] Títulos de subgraph têm no máximo 2-3 palavras
+- [ ] Diagrama inclui `%%{init}%%` com `primaryTextColor` e `nodeTextColor`
+- [ ] Texto legível tanto em light mode quanto dark mode
+
 ## Checklist de Qualidade
 
 - [ ] Links entre documentos funcionam

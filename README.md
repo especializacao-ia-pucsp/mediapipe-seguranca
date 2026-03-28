@@ -331,7 +331,3 @@ python -m unittest discover -s tests -v
 - Google AI Edge — Pose Landmarker Guide for Python
 - Google AI Edge — Image Classification Guide for Python
 - Google AI Edge — `mediapipe_model_maker`
-
-## Observação
-
-Este `README.md` foi elaborado com base no documento `pre_projeto_puc_mediapipe.docx`, consolidando os principais elementos acadêmicos e técnicos da proposta.
