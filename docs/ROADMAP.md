@@ -172,6 +172,21 @@ flowchart TD
 - disponibilidade de vídeos de teste em `data/raw/`;
 - definição mínima de protocolo de entrada.
 
+#### Progresso atual (2026-03-28)
+
+- ✅ **Dataset principal selecionado**: ShanghaiTech Campus (307 treino + 130 teste)
+  - Estratégia documentada em `docs/ESTRATEGIA_DADOS_E_MODELAGEM.md`
+- ✅ **Estrutura de diretórios criada**: `data/raw/shanghaitech/` com subdiretórios `training/`, `testing/`, `SAMPLE/`
+- ✅ **Mini-dataset sintético**: `data/raw/shanghaitech/SAMPLE/` — 5 vídeos treino × 50 frames, 2 vídeos teste × 30 frames, 2 GT masks `.npy` (310 frames total)
+- ✅ **Loader implementado**: `src/mediapipe_seguranca/shanghaitech_loader.py` — `get_train_videos()`, `get_test_videos_with_gt()`, `load_gt_mask()`, `iter_frames()`
+- ✅ **Script de download**: `scripts/download_shanghaitech.py` — tenta múltiplas fontes automaticamente
+- ✅ **Script de validação**: `scripts/validate_shanghaitech.py` — relatório de status do dataset
+- ✅ **Script de geração sintética**: `scripts/create_sample_shanghaitech.py`
+- ✅ **Link oficial do dataset**: OneDrive SVIP Lab — `https://1drv.ms/u/s!AjjUqiJZsj8whLt-1ABerTT-9eH9Ag?e=eJbY6Y`
+- ⚠️ **Dataset real não baixado**: requer download manual (~20 GB) — ver `data/raw/shanghaitech/DOWNLOAD_INSTRUCTIONS.md`
+
+**Pipeline pode executar com SAMPLE/ imediatamente. Download manual necessário para treinamento real.**
+
 #### Principais saídas
 
 - rotina real de leitura de vídeo;
