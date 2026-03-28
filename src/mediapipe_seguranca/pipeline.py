@@ -35,9 +35,7 @@ def run_demo_pipeline(output_path: Path | None = None) -> dict[str, object]:
 
 
 def build_cli_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
-        description="Pipeline inicial do projeto MediaPipe Segurança."
-    )
+    parser = argparse.ArgumentParser(description="Pipeline inicial do projeto MediaPipe Segurança.")
     parser.add_argument(
         "--output",
         type=Path,

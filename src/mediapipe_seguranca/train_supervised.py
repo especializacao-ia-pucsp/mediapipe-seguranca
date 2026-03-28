@@ -23,11 +23,7 @@ def run_supervised_baseline(features: pd.DataFrame) -> dict[str, object]:
     if test_df.empty:
         test_df = train_df.copy()
 
-    centroids = (
-        train_df.groupby("label")[FEATURE_COLUMNS]
-        .mean()
-        .to_dict(orient="index")
-    )
+    centroids = train_df.groupby("label")[FEATURE_COLUMNS].mean().to_dict(orient="index")
 
     predictions: list[str] = []
     for row in test_df[FEATURE_COLUMNS].itertuples(index=False, name=None):

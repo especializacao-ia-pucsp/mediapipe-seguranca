@@ -3,7 +3,6 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-
 FEATURE_COLUMNS = [
     "people_count_mean",
     "movement_score_mean",
