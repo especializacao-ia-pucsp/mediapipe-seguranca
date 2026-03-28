@@ -225,16 +225,20 @@ cython_debug/
 # Learn more at https://abstra.io/docs
 .abstra/
 
-# Arquivos temporários de debug/sessão (resíduos de agentes)
+# Arquivos temporários de debug/sessão (resíduos de agentes e scripts)
 *.tmp
+_*.txt
 *_out.txt
 *_err.txt
+*_check*.txt
+*_check*.log
 ci_*.txt
 ci_*.json
 pr*.txt
 tracked*.txt
 status.txt
 git_status.txt
+remote_output.txt
 
 # Documentos binários (Word, etc)
 *.docx
