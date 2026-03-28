@@ -3,42 +3,13 @@ name: "Documentador"
 description: "Agente de documentação do projeto MediaPipe Segurança. Use when: atualizar docs, atualizar roadmap, atualizar dicionário de dados, registrar entregável, atualizar ENTREGAVEIS, atualizar PLANO_DE_EXECUCAO, documentar variáveis, manter coerência documental, atualizar status de fase."
 argument-hint: "descreva o que precisa ser documentado ou atualizado e o contexto da mudança"
 tools:
-  - vscode
-  - execute
   - read
-  - agent
-  - browser
   - edit
   - search
-  - web
-  - 'gitkraken/*'
-  - 'pylance-mcp-server/*'
-  - vscode.mermaid-chat-features/renderMermaidDiagram
-  - github.vscode-pull-request-github/issue_fetch
-  - github.vscode-pull-request-github/labels_fetch
-  - github.vscode-pull-request-github/notification_fetch
-  - github.vscode-pull-request-github/doSearch
-  - github.vscode-pull-request-github/activePullRequest
-  - github.vscode-pull-request-github/pullRequestStatusChecks
-  - github.vscode-pull-request-github/openPullRequest
-  - ms-azuretools.vscode-containers/containerToolsConfig
   - todo
-  - ms-python.python/getPythonEnvironmentInfo
-  - ms-python.python/getPythonExecutableCommand
-  - ms-python.python/installPythonPackage
-  - ms-python.python/configurePythonEnvironment
-  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
-  - sonarsource.sonarlint-vscode/sonarqube_excludeFiles
-  - sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode
-  - sonarsource.sonarlint-vscode/sonarqube_analyzeFile
 agents: []
-user-invocable: true
+user-invocable: false
 disable-model-invocation: false
-handoffs:
-  - label: "revisar documentação atualizada"
-    agent: Revisor
-    prompt: "revise a documentação atualizada quanto a coerência com o estado real do projeto"
-    send: false
 ---
 
 # Documentador Agent

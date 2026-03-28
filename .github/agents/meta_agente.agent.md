@@ -3,43 +3,13 @@ name: "MetaAgente"
 description: "Agente de meta-operações — cria novos agentes dinamicamente, avalia a eficácia dos agentes existentes e propõe melhorias na estrutura do sistema de agentes. Use when: criar novo agente, capability gap, nenhum agente cobre a tarefa, avaliar desempenho de agentes, melhorar agente, refatorar agent.md, otimizar pipeline de agentes, agent genesis, auditoria de agentes."
 argument-hint: "descreva o gap de capacidade detectado ou a avaliação/melhoria desejada nos agentes"
 tools:
-  - vscode
-  - execute
   - read
-  - agent
-  - browser
   - edit
   - search
-  - web
-  - 'gitkraken/*'
-  - 'pylance-mcp-server/*'
-  - vscode.mermaid-chat-features/renderMermaidDiagram
-  - github.vscode-pull-request-github/issue_fetch
-  - github.vscode-pull-request-github/labels_fetch
-  - github.vscode-pull-request-github/notification_fetch
-  - github.vscode-pull-request-github/doSearch
-  - github.vscode-pull-request-github/activePullRequest
-  - github.vscode-pull-request-github/pullRequestStatusChecks
-  - github.vscode-pull-request-github/openPullRequest
-  - ms-azuretools.vscode-containers/containerToolsConfig
   - todo
-  - ms-python.python/getPythonEnvironmentInfo
-  - ms-python.python/getPythonExecutableCommand
-  - ms-python.python/installPythonPackage
-  - ms-python.python/configurePythonEnvironment
-  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
-  - sonarsource.sonarlint-vscode/sonarqube_excludeFiles
-  - sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode
-  - sonarsource.sonarlint-vscode/sonarqube_analyzeFile
-agents:
-  - Revisor
-user-invocable: true
+agents: []
+user-invocable: false
 disable-model-invocation: false
-handoffs:
-  - label: "revisar agente criado ou modificado"
-    agent: Revisor
-    prompt: "revise o .agent.md criado ou modificado quanto a: escopo sem sobreposição, description com trigger phrases, tools mínimas, boundaries claras"
-    send: false
 ---
 
 # MetaAgente Agent

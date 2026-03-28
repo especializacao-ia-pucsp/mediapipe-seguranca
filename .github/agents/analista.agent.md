@@ -3,50 +3,16 @@ name: "Analista"
 description: "Agente de análise de dados, EDA, modelagem e visualizações do projeto MediaPipe Segurança. Use when: criar notebook, análise exploratória, EDA, estatística descritiva, correlação, visualização, gráfico, clusterização, classificação, treinar modelo, comparar modelos, gerar figuras, material de defesa, interpretar resultados."
 argument-hint: "descreva a análise, notebook ou modelagem a ser realizada"
 tools:
-  - vscode
-  - execute
   - read
-  - agent
-  - browser
   - edit
   - search
-  - web
-  - 'gitkraken/*'
+  - execute
+  - vscode
   - 'pylance-mcp-server/*'
-  - vscode.mermaid-chat-features/renderMermaidDiagram
-  - github.vscode-pull-request-github/issue_fetch
-  - github.vscode-pull-request-github/labels_fetch
-  - github.vscode-pull-request-github/notification_fetch
-  - github.vscode-pull-request-github/doSearch
-  - github.vscode-pull-request-github/activePullRequest
-  - github.vscode-pull-request-github/pullRequestStatusChecks
-  - github.vscode-pull-request-github/openPullRequest
-  - ms-azuretools.vscode-containers/containerToolsConfig
   - todo
-  - ms-python.python/getPythonEnvironmentInfo
-  - ms-python.python/getPythonExecutableCommand
-  - ms-python.python/installPythonPackage
-  - ms-python.python/configurePythonEnvironment
-  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
-  - sonarsource.sonarlint-vscode/sonarqube_excludeFiles
-  - sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode
-  - sonarsource.sonarlint-vscode/sonarqube_analyzeFile
 agents: []
-user-invocable: true
+user-invocable: false
 disable-model-invocation: false
-handoffs:
-  - label: "validar resultados de análise"
-    agent: Validador
-    prompt: "valide integridade dos dados e reprodutibilidade dos resultados gerados"
-    send: false
-  - label: "revisar análise"
-    agent: Revisor
-    prompt: "revise a análise quanto a correção metodológica, interpretação e qualidade das visualizações"
-    send: false
-  - label: "documentar resultados"
-    agent: Documentador
-    prompt: "atualize documentação com resultados, novas variáveis e achados da análise"
-    send: false
 ---
 
 # Analista Agent

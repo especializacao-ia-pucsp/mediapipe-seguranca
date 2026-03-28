@@ -3,45 +3,16 @@ name: "Validador"
 description: "Agente de validação e testes do projeto MediaPipe Segurança. Use when: rodar testes, validar pipeline, verificar integridade de dados, checar reprodutibilidade, validar output, testar módulo, conferir dados gerados, smoke test."
 argument-hint: "descreva o que precisa ser validado (módulo, pipeline, dados, critério de aceitação)"
 tools:
-  - vscode
-  - execute
   - read
-  - agent
-  - browser
-  - edit
   - search
-  - web
-  - 'gitkraken/*'
+  - execute
   - 'pylance-mcp-server/*'
-  - vscode.mermaid-chat-features/renderMermaidDiagram
-  - github.vscode-pull-request-github/issue_fetch
-  - github.vscode-pull-request-github/labels_fetch
-  - github.vscode-pull-request-github/notification_fetch
-  - github.vscode-pull-request-github/doSearch
-  - github.vscode-pull-request-github/activePullRequest
-  - github.vscode-pull-request-github/pullRequestStatusChecks
-  - github.vscode-pull-request-github/openPullRequest
-  - ms-azuretools.vscode-containers/containerToolsConfig
-  - todo
-  - ms-python.python/getPythonEnvironmentInfo
-  - ms-python.python/getPythonExecutableCommand
-  - ms-python.python/installPythonPackage
-  - ms-python.python/configurePythonEnvironment
-  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
-  - sonarsource.sonarlint-vscode/sonarqube_excludeFiles
-  - sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode
   - sonarsource.sonarlint-vscode/sonarqube_analyzeFile
-user-invocable: true
+  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
+  - todo
+agents: []
+user-invocable: false
 disable-model-invocation: false
-handoffs:
-  - label: "corrigir falha encontrada"
-    agent: Implementador
-    prompt: "corrija o problema identificado na validação, seguindo o relatório de falha"
-    send: false
-  - label: "re-analisar após correção"
-    agent: Analista
-    prompt: "re-execute a análise após a correção do problema identificado"
-    send: false
 ---
 
 # Validador Agent

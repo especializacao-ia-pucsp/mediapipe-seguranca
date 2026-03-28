@@ -3,50 +3,21 @@ name: "GitHubOps"
 description: "Agente especialista em GitHub DevOps do projeto MediaPipe Segurança — configura e gerencia GitHub Actions, CI/CD, branch protection, PR templates, issue templates, releases, code scanning, e automações pós-commit/push. Use when: criar workflow CI/CD, configurar GitHub Actions, branch protection, PR template, issue template, release, code scanning, dependabot, automação GitHub, pipeline de deploy, validação automática, linting automático, testes automáticos no push."
 argument-hint: "descreva o fluxo DevOps, automação ou configuração GitHub que precisa ser criada ou ajustada"
 tools:
-  - vscode
-  - execute
   - read
-  - agent
-  - browser
   - edit
   - search
-  - web
+  - execute
   - 'gitkraken/*'
-  - 'pylance-mcp-server/*'
-  - vscode.mermaid-chat-features/renderMermaidDiagram
   - github.vscode-pull-request-github/issue_fetch
   - github.vscode-pull-request-github/labels_fetch
-  - github.vscode-pull-request-github/notification_fetch
   - github.vscode-pull-request-github/doSearch
   - github.vscode-pull-request-github/activePullRequest
   - github.vscode-pull-request-github/pullRequestStatusChecks
   - github.vscode-pull-request-github/openPullRequest
-  - ms-azuretools.vscode-containers/containerToolsConfig
   - todo
-  - ms-python.python/getPythonEnvironmentInfo
-  - ms-python.python/getPythonExecutableCommand
-  - ms-python.python/installPythonPackage
-  - ms-python.python/configurePythonEnvironment
-  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
-  - sonarsource.sonarlint-vscode/sonarqube_excludeFiles
-  - sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode
-  - sonarsource.sonarlint-vscode/sonarqube_analyzeFile
 agents: []
-user-invocable: true
+user-invocable: false
 disable-model-invocation: false
-handoffs:
-  - label: "revisar configuração GitHub"
-    agent: Revisor
-    prompt: "revise os workflows GitHub Actions e configurações DevOps quanto a boas práticas, segurança e eficiência"
-    send: false
-  - label: "atualizar documentação DevOps"
-    agent: Documentador
-    prompt: "atualize a documentação para refletir os novos workflows CI/CD e configurações GitHub"
-    send: false
-  - label: "validar pipeline CI/CD"
-    agent: Validador
-    prompt: "valide que os workflows GitHub Actions estão corretos e que a pipeline CI/CD funciona conforme esperado"
-    send: false
 ---
 
 # GitHubOps Agent

@@ -3,34 +3,10 @@ name: "Orquestrador"
 description: "Agente orquestrador principal do projeto MediaPipe Segurança — classifica intent, seleciona agente correto, valida escopo, coordena fases do roadmap e dispara criação dinâmica de agentes quando necessário. Use when: planejar próximo passo, verificar progresso, o que falta fazer, delegar implementação, revisar entregáveis, coordenar fases, status do projeto, qual a próxima tarefa, avançar o projeto."
 argument-hint: "descreva a tarefa, fase, entregável ou problema que precisa ser resolvido"
 tools:
-  - vscode
-  - execute
   - read
-  - agent
-  - browser
-  - edit
   - search
-  - web
-  - 'gitkraken/*'
-  - 'pylance-mcp-server/*'
-  - vscode.mermaid-chat-features/renderMermaidDiagram
-  - github.vscode-pull-request-github/issue_fetch
-  - github.vscode-pull-request-github/labels_fetch
-  - github.vscode-pull-request-github/notification_fetch
-  - github.vscode-pull-request-github/doSearch
-  - github.vscode-pull-request-github/activePullRequest
-  - github.vscode-pull-request-github/pullRequestStatusChecks
-  - github.vscode-pull-request-github/openPullRequest
-  - ms-azuretools.vscode-containers/containerToolsConfig
+  - agent
   - todo
-  - ms-python.python/getPythonEnvironmentInfo
-  - ms-python.python/getPythonExecutableCommand
-  - ms-python.python/installPythonPackage
-  - ms-python.python/configurePythonEnvironment
-  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
-  - sonarsource.sonarlint-vscode/sonarqube_excludeFiles
-  - sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode
-  - sonarsource.sonarlint-vscode/sonarqube_analyzeFile
 agents:
   - Planejador
   - Implementador
@@ -43,47 +19,6 @@ agents:
   - VSCodeConfig
 user-invocable: true
 disable-model-invocation: false
-handoffs:
-  - label: "planejar tarefa complexa"
-    agent: Planejador
-    prompt: "decomponha esta tarefa em steps ordenados com dependências, critérios de aceitação e escopo por step, respeitando as fases do ROADMAP.md"
-    send: false
-  - label: "implementar código da pipeline"
-    agent: Implementador
-    prompt: "implemente no módulo correto em src/mediapipe_seguranca/ seguindo a arquitetura em docs/ARQUITETURA.md e reporte resultado com evidência"
-    send: false
-  - label: "análise exploratória ou modelagem"
-    agent: Analista
-    prompt: "crie ou atualize notebook/script de análise seguindo o plano em notebooks/README.md e gere visualizações em reports/"
-    send: false
-  - label: "revisar resultado"
-    agent: Revisor
-    prompt: "execute review multi-pass (Correção → Arquitetura → Qualidade → Documentação) e produza relatório"
-    send: false
-  - label: "validar pipeline ou dados"
-    agent: Validador
-    prompt: "execute testes, valide pipeline e verifique integridade dos dados gerados"
-    send: false
-  - label: "atualizar documentação"
-    agent: Documentador
-    prompt: "atualize docs/ para refletir o estado atual do projeto, incluindo ROADMAP.md, DICIONARIO_DE_DADOS.md e ENTREGAVEIS.md"
-    send: false
-  - label: "criar novo agente (capability gap)"
-    agent: MetaAgente
-    prompt: "analise o CAPABILITY_GAP, verifique sobreposição com agentes existentes, crie o .agent.md e atualize a tabela de roteamento"
-    send: false
-  - label: "avaliar e melhorar agentes"
-    agent: MetaAgente
-    prompt: "audite todos os agentes em .github/agents/, avalie qualidade e proponha melhorias na estrutura"
-    send: false
-  - label: "configurar CI/CD e automações GitHub"
-    agent: GitHubOps
-    prompt: "configure workflows GitHub Actions, templates de PR/issue, branch protection e automações DevOps para o repositório"
-    send: false
-  - label: "configurar VS Code Insiders"
-    agent: VSCodeConfig
-    prompt: "configure extensões, settings, tasks e launch configs do VS Code Insiders para máxima eficiência no projeto"
-    send: false
 ---
 
 # Orquestrador Agent
@@ -222,7 +157,7 @@ Quando qualquer agente (incluindo você) detecta que nenhum agente existente con
 
 ### Template para Criação Dinâmica de Agentes
 
-Novos agentes DEVEM seguir esta estrutura de frontmatter:
+Novos agentes DEVEM seguir esta estrutura de frontmatter. **IMPORTANTE**: atribua APENAS as tools mínimas necessárias para o papel do agente. NÃO dê acesso a todas as ferramentas. Consulte a tabela "Mapa de Ferramentas por Agente" na seção de referência.
 
 ```markdown
 ---
@@ -230,42 +165,22 @@ name: "{NomeDoAgente}"
 description: "Descrição de uma linha do que este agente faz. Use when: trigger phrases"
 argument-hint: "dica de uso para o usuário"
 tools:
-  - vscode
-  - execute
+  # SELECIONE APENAS as tools necessárias para este agente.
+  # Ferramentas disponíveis:
+  #   Base: read, edit, search, execute, agent, vscode, browser, web, todo
+  #   Git: 'gitkraken/*'
+  #   Pylance: 'pylance-mcp-server/*'
+  #   GitHub: github.vscode-pull-request-github/{issue_fetch,labels_fetch,doSearch,activePullRequest,pullRequestStatusChecks,openPullRequest}
+  #   Python: ms-python.python/{getPythonEnvironmentInfo,getPythonExecutableCommand,installPythonPackage,configurePythonEnvironment}
+  #   SonarQube: sonarsource.sonarlint-vscode/{sonarqube_analyzeFile,sonarqube_getPotentialSecurityIssues}
+  #   Visual: vscode.mermaid-chat-features/renderMermaidDiagram
   - read
-  - agent
-  - browser
-  - edit
   - search
-  - web
-  - 'gitkraken/*'
-  - 'pylance-mcp-server/*'
-  - vscode.mermaid-chat-features/renderMermaidDiagram
-  - github.vscode-pull-request-github/issue_fetch
-  - github.vscode-pull-request-github/labels_fetch
-  - github.vscode-pull-request-github/notification_fetch
-  - github.vscode-pull-request-github/doSearch
-  - github.vscode-pull-request-github/activePullRequest
-  - github.vscode-pull-request-github/pullRequestStatusChecks
-  - github.vscode-pull-request-github/openPullRequest
-  - ms-azuretools.vscode-containers/containerToolsConfig
   - todo
-  - ms-python.python/getPythonEnvironmentInfo
-  - ms-python.python/getPythonExecutableCommand
-  - ms-python.python/installPythonPackage
-  - ms-python.python/configurePythonEnvironment
-  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
-  - sonarsource.sonarlint-vscode/sonarqube_excludeFiles
-  - sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode
-  - sonarsource.sonarlint-vscode/sonarqube_analyzeFile
+  # adicione SOMENTE o que este agente realmente precisa
 agents: []
 user-invocable: false
 disable-model-invocation: false
-handoffs:
-  - label: "próximo passo sugerido"
-    agent: ProximoAgente
-    prompt: "prompt pré-preenchido para o handoff"
-    send: false
 ---
 
 # {NomeDoAgente} Agent
@@ -382,73 +297,42 @@ O Orquestrador APENAS:
 
 ## Referência de Ferramentas
 
-Todos os agentes do ecossistema (incluindo você) têm acesso ao conjunto completo de ferramentas abaixo. Use-as diretamente quando necessário para diagnóstico e coordenação:
+Cada agente tem acesso APENAS às ferramentas necessárias para seu papel. O Orquestrador tem `read`, `search`, `agent` e `todo`.
 
-### Ferramentas Base
-| Ferramenta | Uso |
-|---|---|
-| `read` | Ler conteúdo de arquivos do workspace |
-| `edit` | Criar ou editar arquivos no workspace |
-| `search` | Buscar texto ou padrões no codebase |
-| `execute` | Executar comandos no terminal (PowerShell) |
-| `agent` | Invocar sub-agentes para delegar tarefas |
-| `browser` | Abrir e interagir com páginas web no navegador |
-| `web` | Buscar informações na web |
-| `vscode` | Executar comandos do VS Code e acessar APIs do editor |
-| `todo` | Gerenciar lista de tarefas para rastrear progresso |
+### Mapa de Ferramentas por Agente
 
-### Git & GitHub (GitKraken)
-| Ferramenta | Uso |
-|---|---|
-| `gitkraken/git_status` | Ver status do repositório (modified, staged, untracked) |
-| `gitkraken/git_add_or_commit` | Stage e commit de arquivos com mensagem padronizada |
-| `gitkraken/git_branch` | Criar, listar e gerenciar branches |
-| `gitkraken/git_checkout` | Trocar de branch ou restaurar arquivos |
-| `gitkraken/git_log_or_diff` | Ver histórico de commits e diffs |
-| `gitkraken/git_push` | Push de commits para o remote |
-| `gitkraken/git_stash` | Stash de mudanças temporárias |
-| `gitkraken/git_blame` | Ver autoria linha a linha |
-| `gitkraken/git_worktree` | Gerenciar worktrees |
+| Agente | Tools | Justificativa |
+|---|---|---|
+| **Orquestrador** | `read`, `search`, `agent`, `todo` | Lê docs para diagnóstico, busca contexto, invoca sub-agentes, rastreia tarefas |
+| **Planejador** | `read`, `search`, `todo` | Lê docs/código para planejar, busca dependências, cria planos estruturados |
+| **MetaAgente** | `read`, `edit`, `search`, `todo` | Lê/cria agent.md files, busca agentes existentes |
+| **Implementador** | `read`, `edit`, `search`, `execute`, `pylance/*`, `todo` | Lê/escreve código, roda scripts, análise estática Python |
+| **Analista** | `read`, `edit`, `search`, `execute`, `vscode`, `pylance/*`, `todo` | Lê/cria notebooks e scripts, roda análises, operações de notebook |
+| **Documentador** | `read`, `edit`, `search`, `todo` | Lê/escreve documentação, busca contexto |
+| **GitHubOps** | `read`, `edit`, `search`, `execute`, `gitkraken/*`, 6 github PR tools, `todo` | Lê/cria workflows, git ops, gerencia PRs/issues |
+| **VSCodeConfig** | `read`, `edit`, `search`, `execute`, `vscode`, 4 ms-python tools, `todo` | Configura editor, instala extensões, gerencia ambiente Python |
+| **Revisor** | `read`, `search`, `gitkraken/*`, `pylance/*`, `todo` | Lê código, git blame/diff para revisão, análise estática |
+| **Validador** | `read`, `search`, `execute`, `pylance/*`, 2 sonarqube tools, `todo` | Lê código/dados, roda testes, análise de qualidade/segurança |
 
-### GitHub Pull Requests & Issues
-| Ferramenta | Uso |
-|---|---|
-| `issue_fetch` | Buscar detalhes de uma issue |
-| `labels_fetch` | Listar labels disponíveis |
-| `notification_fetch` | Ver notificações do repositório |
-| `doSearch` | Buscar issues e PRs |
-| `activePullRequest` | Ver PR ativo no workspace |
-| `pullRequestStatusChecks` | Ver status checks de um PR |
-| `openPullRequest` | Abrir um novo Pull Request |
+### Catálogo Completo de Ferramentas Disponíveis
 
-### Python (Pylance & Ambiente)
-| Ferramenta | Uso |
-|---|---|
-| `pylance-mcp-server/*` | Análise estática Python — tipos, imports, erros de sintaxe, refatoração, docstrings |
-| `getPythonEnvironmentInfo` | Info sobre o ambiente Python ativo (venv, versão) |
-| `getPythonExecutableCommand` | Obter comando do executável Python |
-| `installPythonPackage` | Instalar pacotes Python (pip install) |
-| `configurePythonEnvironment` | Configurar ambiente Python do workspace |
+| Categoria | Ferramentas | Agentes que Usam |
+|---|---|---|
+| **Base** | `read`, `search`, `todo` | Todos |
+| **Edição** | `edit` | Implementador, Analista, Documentador, MetaAgente, GitHubOps, VSCodeConfig |
+| **Execução** | `execute` | Implementador, Analista, GitHubOps, VSCodeConfig, Validador |
+| **Sub-agentes** | `agent` | Apenas Orquestrador |
+| **VS Code** | `vscode` | Analista, VSCodeConfig |
+| **Git** | `gitkraken/*` | GitHubOps, Revisor |
+| **GitHub PR/Issues** | `github.vscode-pull-request-github/*` | GitHubOps |
+| **Python (Pylance)** | `pylance-mcp-server/*` | Implementador, Analista, Revisor, Validador |
+| **Python (Ambiente)** | `ms-python.python/*` | VSCodeConfig |
+| **Qualidade** | `sonarsource.sonarlint-vscode/sonarqube_*` | Validador |
 
-### Qualidade & Segurança (SonarQube)
-| Ferramenta | Uso |
-|---|---|
-| `sonarqube_analyzeFile` | Analisar arquivo para bugs, code smells e vulnerabilidades |
-| `sonarqube_getPotentialSecurityIssues` | Listar problemas de segurança potenciais |
-| `sonarqube_excludeFiles` | Excluir arquivos da análise SonarQube |
-| `sonarqube_setUpConnectedMode` | Configurar SonarQube em modo conectado |
+### Princípios de Atribuição de Tools
 
-### Visualização & Containers
-| Ferramenta | Uso |
-|---|---|
-| `renderMermaidDiagram` | Renderizar diagramas Mermaid (fluxos, arquitetura, sequência) |
-| `containerToolsConfig` | Configuração de ferramentas de containers |
-
-### Quando Usar Cada Categoria
-
-- **Git (gitkraken/*)**: Para diagnosticar estado do repo, verificar se mudanças estão commitadas, ver histórico.
-- **GitHub PR/Issues**: Para verificar progresso do projeto, issues abertas, PRs pendentes.
-- **Pylance**: Para entender estrutura do código ao classificar tarefas de implementação.
-- **SonarQube**: Para avaliar qualidade ao decidir se código precisa de revisão.
-- **Python env**: Para verificar estado do ambiente ao diagnosticar problemas.
-- **Mermaid**: Para visualizar arquitetura e fluxos ao coordenar fases.
+1. **Mínimo necessário** — cada agente recebe SOMENTE as tools indispensáveis para suas responsabilidades
+2. **`agent` é exclusivo do Orquestrador** — apenas o Orquestrador pode invocar outros agentes
+3. **`edit` apenas para quem escreve** — agentes de leitura/revisão (Planejador, Revisor) não editam
+4. **`execute` apenas para quem roda** — agentes que precisam executar scripts, testes ou comandos
+5. **Tools especializadas por domínio** — git tools para GitHubOps/Revisor, sonarqube para Validador, vscode para VSCodeConfig/Analista

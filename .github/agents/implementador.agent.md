@@ -3,50 +3,15 @@ name: "Implementador"
 description: "Agente de implementação de código do projeto MediaPipe Segurança. Use when: escrever código, criar módulo, implementar feature, corrigir bug, refatorar, modificar pipeline, atualizar src/, criar script, implementar ingestão, integrar MediaPipe, implementar feature engineering."
 argument-hint: "descreva o que precisa ser implementado, o módulo alvo e o critério de aceitação"
 tools:
-  - vscode
-  - execute
   - read
-  - agent
-  - browser
   - edit
   - search
-  - web
-  - 'gitkraken/*'
+  - execute
   - 'pylance-mcp-server/*'
-  - vscode.mermaid-chat-features/renderMermaidDiagram
-  - github.vscode-pull-request-github/issue_fetch
-  - github.vscode-pull-request-github/labels_fetch
-  - github.vscode-pull-request-github/notification_fetch
-  - github.vscode-pull-request-github/doSearch
-  - github.vscode-pull-request-github/activePullRequest
-  - github.vscode-pull-request-github/pullRequestStatusChecks
-  - github.vscode-pull-request-github/openPullRequest
-  - ms-azuretools.vscode-containers/containerToolsConfig
   - todo
-  - ms-python.python/getPythonEnvironmentInfo
-  - ms-python.python/getPythonExecutableCommand
-  - ms-python.python/installPythonPackage
-  - ms-python.python/configurePythonEnvironment
-  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
-  - sonarsource.sonarlint-vscode/sonarqube_excludeFiles
-  - sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode
-  - sonarsource.sonarlint-vscode/sonarqube_analyzeFile
 agents: []
-user-invocable: true
+user-invocable: false
 disable-model-invocation: false
-handoffs:
-  - label: "validar implementação"
-    agent: Validador
-    prompt: "execute testes e valide que a implementação atende os critérios de aceitação"
-    send: false
-  - label: "revisar código"
-    agent: Revisor
-    prompt: "revise o código implementado quanto a correção, arquitetura e qualidade"
-    send: false
-  - label: "atualizar documentação pós-implementação"
-    agent: Documentador
-    prompt: "atualize dicionário de dados e documentação técnica para refletir as mudanças implementadas"
-    send: false
 ---
 
 # Implementador Agent

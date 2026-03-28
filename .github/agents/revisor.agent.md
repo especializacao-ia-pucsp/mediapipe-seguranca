@@ -3,46 +3,14 @@ name: "Revisor"
 description: "Agente de revisão de código e qualidade do projeto MediaPipe Segurança. Use when: revisar código, code review, verificar qualidade, auditar arquitetura, revisar análise, checar padrões, avaliar interpretação, review multi-pass."
 argument-hint: "descreva o que precisa ser revisado e quais preocupações específicas"
 tools:
-  - vscode
-  - execute
   - read
-  - agent
-  - browser
-  - edit
   - search
-  - web
   - 'gitkraken/*'
   - 'pylance-mcp-server/*'
-  - vscode.mermaid-chat-features/renderMermaidDiagram
-  - github.vscode-pull-request-github/issue_fetch
-  - github.vscode-pull-request-github/labels_fetch
-  - github.vscode-pull-request-github/notification_fetch
-  - github.vscode-pull-request-github/doSearch
-  - github.vscode-pull-request-github/activePullRequest
-  - github.vscode-pull-request-github/pullRequestStatusChecks
-  - github.vscode-pull-request-github/openPullRequest
-  - ms-azuretools.vscode-containers/containerToolsConfig
   - todo
-  - ms-python.python/getPythonEnvironmentInfo
-  - ms-python.python/getPythonExecutableCommand
-  - ms-python.python/installPythonPackage
-  - ms-python.python/configurePythonEnvironment
-  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
-  - sonarsource.sonarlint-vscode/sonarqube_excludeFiles
-  - sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode
-  - sonarsource.sonarlint-vscode/sonarqube_analyzeFile
 agents: []
-user-invocable: true
+user-invocable: false
 disable-model-invocation: false
-handoffs:
-  - label: "corrigir problemas encontrados"
-    agent: Implementador
-    prompt: "corrija os problemas identificados na revisão conforme o relatório de review"
-    send: false
-  - label: "atualizar documentação após correções"
-    agent: Documentador
-    prompt: "atualize documentação para refletir as correções aplicadas"
-    send: false
 ---
 
 # Revisor Agent

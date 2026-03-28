@@ -3,50 +3,12 @@ name: "Planejador"
 description: "Agente de planejamento e decomposição de tarefas do projeto MediaPipe Segurança. Use when: decompor tarefa complexa, planejar fase, definir steps ordenados, analisar dependências, criar plano de execução, quebrar em subtarefas, priorizar itens."
 argument-hint: "descreva a tarefa ou fase que precisa ser decomposta em steps"
 tools:
-  - vscode
-  - execute
   - read
-  - agent
-  - browser
-  - edit
   - search
-  - web
-  - 'gitkraken/*'
-  - 'pylance-mcp-server/*'
-  - vscode.mermaid-chat-features/renderMermaidDiagram
-  - github.vscode-pull-request-github/issue_fetch
-  - github.vscode-pull-request-github/labels_fetch
-  - github.vscode-pull-request-github/notification_fetch
-  - github.vscode-pull-request-github/doSearch
-  - github.vscode-pull-request-github/activePullRequest
-  - github.vscode-pull-request-github/pullRequestStatusChecks
-  - github.vscode-pull-request-github/openPullRequest
-  - ms-azuretools.vscode-containers/containerToolsConfig
   - todo
-  - ms-python.python/getPythonEnvironmentInfo
-  - ms-python.python/getPythonExecutableCommand
-  - ms-python.python/installPythonPackage
-  - ms-python.python/configurePythonEnvironment
-  - sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues
-  - sonarsource.sonarlint-vscode/sonarqube_excludeFiles
-  - sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode
-  - sonarsource.sonarlint-vscode/sonarqube_analyzeFile
 agents: []
-user-invocable: true
+user-invocable: false
 disable-model-invocation: false
-handoffs:
-  - label: "implementar step planejado"
-    agent: Implementador
-    prompt: "implemente o step descrito seguindo escopo e critérios de aceitação definidos no plano"
-    send: false
-  - label: "analisar dados conforme plano"
-    agent: Analista
-    prompt: "execute a análise planejada seguindo escopo e critérios definidos"
-    send: false
-  - label: "atualizar documentação do plano"
-    agent: Documentador
-    prompt: "atualize a documentação para refletir o plano aprovado"
-    send: false
 ---
 
 # Planejador Agent
