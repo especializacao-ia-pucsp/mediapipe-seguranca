@@ -225,6 +225,33 @@ cython_debug/
 # Learn more at https://abstra.io/docs
 .abstra/
 
+# Arquivos temporários de debug/sessão (resíduos de agentes)
+*.tmp
+*_out.txt
+*_err.txt
+ci_*.txt
+ci_*.json
+pr*.txt
+tracked*.txt
+status.txt
+git_status.txt
+
+# Documentos binários (Word, etc)
+*.docx
+*.doc
+*.pptx
+*.ppt
+*.xlsx
+*.xls
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ruff cache
+.ruff_cache/
+
 # Visual Studio Code
 #  Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
 #  that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
