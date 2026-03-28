@@ -12,7 +12,7 @@ SRC_DIR = ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from mediapipe_seguranca.pipeline import run_demo_pipeline
+from mediapipe_seguranca.pipeline import run_demo_pipeline  # noqa: E402
 
 
 class PipelineTests(unittest.TestCase):

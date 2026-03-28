@@ -3,8 +3,6 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-import pandas as pd
-
 from .config import get_project_paths
 from .feature_engineering import aggregate_window_features
 from .mediapipe_extract import generate_demo_observations
