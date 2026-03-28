@@ -7,6 +7,7 @@ Este documento descreve os principais campos, métricas e rótulos previstos no 
 - [Início](../README.md)
 - [Contribuição](../CONTRIBUTING.md)
 - [Arquitetura](ARQUITETURA.md)
+- [Cronograma](CRONOGRAMA.md)
 - [Entregáveis](ENTREGAVEIS.md)
 - [Plano de execução](PLANO_DE_EXECUCAO.md)
 - [Roadmap](ROADMAP.md)
@@ -14,6 +15,7 @@ Este documento descreve os principais campos, métricas e rótulos previstos no 
 - [Dados processados](../data/processed/README.md)
 - [Rótulos](../data/labels/README.md)
 - [Notebooks](../notebooks/README.md)
+- [Relatórios](../reports/README.md)
 
 ## Objetivo
 
