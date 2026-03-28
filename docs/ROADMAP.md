@@ -72,7 +72,7 @@ gantt
     Fase 1 — Fundação documental      :done,    f1, 2026-03-16, 2026-03-22
 
     section Ingestão e Percepção
-    Fase 2 — Ingestão real de vídeo    :active,  f2, 2026-03-23, 2026-03-29
+    Fase 2 — Ingestão real de vídeo    :done,    f2, 2026-03-23, 2026-03-28
     Fase 3 — Integração com MediaPipe  :         f3, 2026-03-30, 2026-04-05
 
     section Preparação de Dados
@@ -158,7 +158,7 @@ flowchart TD
 
 ### Fase 2: ingestão real de vídeo
 
-**Status**: em andamento
+**Status**: concluída
 **Cronograma PI**: cobre atividades 49, 55, 58-60 (Pré-Processamento — Ingestão)
 
 #### Objetivos
@@ -169,23 +169,39 @@ flowchart TD
 
 #### Dependências
 
-- disponibilidade de vídeos de teste em `data/raw/`;
+- disponibilidade local do dataset real extraído em `data/raw/shanghaitech/` ou uso do `SAMPLE/` versionado;
 - definição mínima de protocolo de entrada.
 
 #### Progresso atual (2026-03-28)
 
-- ✅ **Dataset principal selecionado**: ShanghaiTech Campus (307 treino + 130 teste)
+- ✅ **Dataset principal selecionado**: ShanghaiTech Campus (330 treino, 109 teste, 109 GT masks no dataset real)
   - Estratégia documentada em `docs/ESTRATEGIA_DADOS_E_MODELAGEM.md`
-- ✅ **Estrutura de diretórios criada**: `data/raw/shanghaitech/` com subdiretórios `training/`, `testing/`, `SAMPLE/`
+- ✅ **Estrutura de diretórios criada**: `data/raw/shanghaitech/` com suporte a `training/` e `testing/` locais e `SAMPLE/` versionado
 - ✅ **Mini-dataset sintético**: `data/raw/shanghaitech/SAMPLE/` — 5 vídeos treino × 50 frames, 2 vídeos teste × 30 frames, 2 GT masks `.npy` (310 frames total)
 - ✅ **Loader implementado**: `src/mediapipe_seguranca/shanghaitech_loader.py` — `get_train_videos()`, `get_test_videos_with_gt()`, `load_gt_mask()`, `iter_frames()`
-- ✅ **Script de download**: `scripts/download_shanghaitech.py` — tenta múltiplas fontes automaticamente
+- ✅ **Script de download**: `scripts/download_shanghaitech.py` — apoio ao processo de obtenção, sujeito à disponibilidade das fontes externas
 - ✅ **Script de validação**: `scripts/validate_shanghaitech.py` — relatório de status do dataset
 - ✅ **Script de geração sintética**: `scripts/create_sample_shanghaitech.py`
 - ✅ **Link oficial do dataset**: OneDrive SVIP Lab — `https://1drv.ms/u/s!AjjUqiJZsj8whLt-1ABerTT-9eH9Ag?e=eJbY6Y`
 - ⚠️ **Dataset real não baixado**: requer download manual (~20 GB) — ver `data/raw/shanghaitech/DOWNLOAD_INSTRUCTIONS.md`
 
-**Pipeline pode executar com SAMPLE/ imediatamente. Download manual necessário para treinamento real.**
+**Pipeline pode executar com `SAMPLE/` imediatamente. Para uso do dataset real, o download e a extração devem ser feitos localmente.**
+
+#### Fase 2 Concluída
+
+**Data de conclusão**: 2026-03-28
+
+**Artefatos principais**:
+
+- ✅ **Ingestão ShanghaiTech Campus validada**: pipeline e processo de ingestão validados com dataset real em ambiente local (330 vídeos treino, 109 vídeos teste, 109 GT masks)
+- ✅ **Scripts de download e validação**: `download_shanghaitech.py`, `validate_shanghaitech.py`, `create_sample_shanghaitech.py`
+- ✅ **Loader integrado**: `shanghaitech_loader.py` com métodos `get_train_videos()`, `get_test_videos_with_gt()`, `load_gt_mask()`, `iter_frames()`
+- ✅ **Documentação completa**: `DOWNLOAD_INSTRUCTIONS.md`, `DOWNLOAD_STATUS.md`, `DATASET_GUIDE.md`
+- ✅ **Armazenamento de dados**: estratégia documentada para download oficial e uso local; repositório mantém apenas `SAMPLE/` e documentação leve
+
+**Método de ingestão**: OpenCV AVI → JPEG frames (640×480, índices sequenciais)
+
+**Status**: READY FOR FASE 3 — Integração com MediaPipe
 
 #### Principais saídas
 

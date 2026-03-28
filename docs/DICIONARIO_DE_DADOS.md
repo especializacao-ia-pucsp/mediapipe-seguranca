@@ -85,6 +85,42 @@ Atualmente, a pipeline base gera uma estrutura sintética que simula a futura ba
 
 ## Rótulos atuais e rótulos planejados
 
+### ShanghaiTech Campus Dataset
+
+**Origem**: SVIP Lab, ShanghaiTech University via OneDrive official link
+**Versão**: 2024-12 (extraído 2026-03-28)
+**Tamanho**: 6.67 GB (comprimido), ~8.5 GB (descomprimido)
+**Disponibilidade**: estrutura real suportada localmente via download/extração manual; repositório versiona apenas documentação e `SAMPLE/`
+
+#### Contagem de Amostras
+
+As contagens abaixo referem-se ao dataset real quando presente localmente em `data/raw/shanghaitech/`.
+
+- **Training videos**: 330 (pasta `training/frames/`)
+- **Test videos**: 109 (pasta `testing/frames/`)
+- **Ground Truth masks**: 109 (pasta `testing/test_frame_mask/`, formato .npy)
+
+#### Estrutura de Dados
+
+- **Frames**: JPEG 640×480 (ou resolução nativa), índices 000.jpg, 001.jpg, ...
+- **GT masks**: uint8 NumPy array (0=background, 1=foreground anomaly)
+- **Localização no projeto**: `data/raw/shanghaitech/`
+
+#### Variáveis Resultantes
+
+| Nome | Tipo | Granularidade | Descrição |
+| --- | --- | --- | --- |
+| `video_id` | string | video | Identificador único (e.g., "01_001") |
+| `frame_index` | int | frame | Índice sequencial do frame (0-based) |
+| `frame_path` | string | frame | Caminho relativo ao frame JPEG |
+| `has_gt_mask` | bool | video | Indica se vídeo tem GT mask correspondente |
+| `gt_mask_path` | string | video | Caminho para .npy (se exists) |
+| `frame_count` | int | video | Total de frames no vídeo |
+
+---
+
+### Rótulos e taxonomia
+
 ### Rótulos usados na demo
 
 | Rótulo | Significado |

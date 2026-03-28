@@ -47,7 +47,7 @@ flowchart TD
     E1 --> G1 --> E2 --> G2 --> E3 --> G3 --> E4 --> G4 --> E5 --> G5 --> E6 --> G6 --> E7 --> G7 --> E8
 
     style E1 fill:#4CAF50,color:#fff
-    style E2 fill:#FF9800,color:#fff
+    style E2 fill:#4CAF50,color:#fff
     style E3 fill:#78909C,color:#fff
     style E4 fill:#78909C,color:#fff
     style E5 fill:#78909C,color:#fff

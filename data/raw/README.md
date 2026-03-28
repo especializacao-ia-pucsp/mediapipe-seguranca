@@ -34,3 +34,38 @@ Este diretório deve armazenar os **insumos originais** do projeto, sem transfor
 ## Versionamento
 
 Arquivos reais de vídeo normalmente **não devem ser versionados** no repositório. O Git deve preservar apenas este guia e o placeholder da pasta.
+
+---
+
+## Dataset ShanghaiTech Campus (Fase 2)
+
+O projeto usa o **ShanghaiTech Campus Dataset**, um benchmark de detecção de anomalias em vídeo de segurança pública.
+
+- **Localização**: `data/raw/shanghaitech/`
+- **Versionado no Git**: documentação leve e `SAMPLE/`
+- **Dataset real**: download e extração locais, fora do versionamento do repositório
+- **Como usar**: [Veja o guia completo](shanghaitech/DATASET_GUIDE.md)
+- **Para informações técnicas**: [Repositório ShanghaiTech](https://svip-lab.github.io/dataset_campus.html)
+
+### Estrutura
+
+```
+shanghaitech/
+├── training/                # ignorado no git; extraído localmente
+├── testing/                 # ignorado no git; extraído localmente
+├── SAMPLE/                  # Mini-dataset sintético versionado para dev
+├── README.md                # Descrição do dataset
+├── DATASET_GUIDE.md         # Como usar a estrutura local
+├── DOWNLOAD_INSTRUCTIONS.md # Como fazer download
+├── DOWNLOAD_STATUS.md       # Marcador leve de referência
+```
+
+### Verificação rápida
+
+Para validar a integridade do dataset real local, quando presente:
+
+```bash
+.venv\Scripts\python.exe scripts/validate_shanghaitech.py
+```
+
+Enquanto o dataset real não estiver disponível, o projeto pode ser explorado com `SAMPLE/`.

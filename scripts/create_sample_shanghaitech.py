@@ -210,9 +210,9 @@ def main() -> None:
     test_results = _create_testing(SAMPLE_ROOT)
     _write_sample_readme(SAMPLE_ROOT, train_paths, test_results)
 
-    total_frames = sum(
-        len(list(p.glob("*.jpg"))) for p in train_paths
-    ) + sum(len(list(vd.glob("*.jpg"))) for vd, _ in test_results)
+    total_frames = sum(len(list(p.glob("*.jpg"))) for p in train_paths) + sum(
+        len(list(vd.glob("*.jpg"))) for vd, _ in test_results
+    )
 
     print(f"\nDone! {total_frames} synthetic frames created in {SAMPLE_ROOT}")
     print(f"  Training videos: {len(train_paths)}")

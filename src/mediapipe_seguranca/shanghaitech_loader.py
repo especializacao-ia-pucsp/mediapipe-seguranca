@@ -29,14 +29,28 @@ def _resolve_dataset_root() -> Path:
     """
     Return the active dataset root.
 
-    Priority:
-    1. Real dataset: training/frames/ contains at least one sub-directory
-    2. SAMPLE dataset: SAMPLE/training/frames/ exists
+     Priority:
+     1. Real dataset if it has minimum coherent structure
+         (>=1 train dir, >=1 test dir, >=1 test .npy mask)
+     2. SAMPLE dataset: SAMPLE/training/frames/ exists
     """
     root = _shanghaitech_root()
+
     real_train = root / "training" / "frames"
-    if real_train.exists() and any(real_train.iterdir()):
+    real_test = root / "testing" / "frames"
+    real_masks = root / "testing" / "test_frame_mask"
+    real_ready = (
+        real_train.exists()
+        and any(p.is_dir() for p in real_train.iterdir())
+        and real_test.exists()
+        and any(p.is_dir() for p in real_test.iterdir())
+        and real_masks.exists()
+        and any(real_masks.glob("*.npy"))
+    )
+
+    if real_ready:
         return root
+
     sample_train = root / "SAMPLE" / "training" / "frames"
     if sample_train.exists() and any(sample_train.iterdir()):
         return root / "SAMPLE"

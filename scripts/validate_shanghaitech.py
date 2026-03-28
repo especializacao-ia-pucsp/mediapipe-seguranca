@@ -3,6 +3,7 @@
 Validate ShanghaiTech Campus dataset structure and print a status report.
 Run from project root: python scripts/validate_shanghaitech.py
 """
+
 from __future__ import annotations
 
 import sys

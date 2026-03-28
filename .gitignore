@@ -87,15 +87,28 @@ data/raw/*
 !data/raw/.gitkeep
 !data/raw/README.md
 
-# ShanghaiTech dataset — allow SAMPLE synthetic data and metadata, exclude large real frames
+# ShanghaiTech dataset — keep only lightweight docs and SAMPLE in git
 !data/raw/shanghaitech/
+!data/raw/shanghaitech/*.md
+!data/raw/shanghaitech/SAMPLE/
+!data/raw/shanghaitech/SAMPLE/**
 data/raw/shanghaitech/training/
 data/raw/shanghaitech/testing/
+data/raw/shanghaitech/**/*.tmp
+data/raw/shanghaitech/**/*.part
+data/raw/shanghaitech/**/*.partial
+data/raw/shanghaitech/**/*.download
+data/raw/shanghaitech/**/*~
 data/raw/**/*.mp4
 data/raw/**/*.avi
 data/raw/**/*.tar
 data/raw/**/*.tar.gz
 data/raw/**/*.zip
+data/raw/**/*.7z
+data/raw/**/*.rar
+_downloads_onedrive_manual/
+_downloads_gdrive_manual/
+splits.zip
 
 data/interim/*
 !data/interim/.gitkeep

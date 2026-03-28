@@ -1,31 +1,22 @@
-# ShanghaiTech Dataset — Status de Preparação
+# Status de Download do ShanghaiTech
 
-## Status: SAMPLE PRONTO — Dataset real requer download manual
+Este arquivo é apenas um marcador leve versionado no repositório.
 
-**Data de criação**: 2026-03-28
+Ele **não** deve ser tratado como snapshot confiável do estado local do dataset no ambiente de quem clonou o projeto.
 
----
+## O que este arquivo representa
 
-### Dataset sintético (SAMPLE/) ✅
-- **Finalidade**: desenvolvimento e testes end-to-end da pipeline
-- **Training videos**: 5 pastas × 50 frames (`SAMPLE/training/frames/01_001` … `01_005`)
-- **Testing videos**: 2 pastas × 30 frames (`SAMPLE/testing/frames/`)
-- **GT masks**: 2 arquivos `.npy` (`SAMPLE/testing/test_frame_mask/`)
-- **Frames gerados**: 310 JPEGs sintéticos
-- **Status loader**: `shanghaitech_loader.py` auto-detecta SAMPLE/ como fallback
+- referência documental sobre a estratégia de obtenção do dataset;
+- lembrete de que o repositório mantém apenas artefatos leves;
+- ponto de apoio para a validação descrita em `DOWNLOAD_INSTRUCTIONS.md`.
 
-### Dataset real (ShanghaiTech Campus) ⚠️
-- **Status**: Não baixado (download automático falhou — links restritos)
-- **Tentativa SVIP Lab**: Google Drive link vazio (`href=" "`); OneDrive disponível em `https://1drv.ms/u/s!AjjUqiJZsj8whLt-1ABerTT-9eH9Ag?e=eJbY6Y` (requer browser)
-- **Tentativa Hugging Face**: `huggingface_hub` não instalado; download automático não realizado
-- **Download manual**: ver `DOWNLOAD_INSTRUCTIONS.md`
-- **URL oficial**: https://svip-lab.github.io/dataset/campus_dataset.html
-- **Tamanho estimado**: ~20 GB total (training + testing)
-- **Estrutura esperada**: `training/frames/` (~330 vídeos), `testing/frames/` (~107 vídeos), `testing/test_frame_mask/` (~137 .npy)
+## Política resumida
 
----
+- **Conteúdo versionado**: documentação leve e `SAMPLE/`
+- **Dataset real**: download e extração locais
+- **Diretórios locais esperados**: `training/` e `testing/`
+- **Validação**: `scripts/validate_shanghaitech.py`
 
-### Próximos passos
-1. Executar `python main.py` com SAMPLE/ para validar a pipeline end-to-end
-2. Baixar o dataset real (ver `DOWNLOAD_INSTRUCTIONS.md`)
-3. Avançar para Fase 3 — Integração com MediaPipe
+## Uso recomendado
+
+Consulte `DOWNLOAD_INSTRUCTIONS.md` para preparar o dataset real no seu ambiente local ou use `SAMPLE/` enquanto essa preparação não for necessária.
