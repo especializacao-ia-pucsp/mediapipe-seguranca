@@ -9,7 +9,6 @@ Este documento organiza o desenvolvimento do projeto em etapas práticas, conect
 - [Arquitetura](ARQUITETURA.md)
 - [Cronograma](CRONOGRAMA.md)
 - [Entregáveis](ENTREGAVEIS.md)
-- [Estratégia de dados e modelagem](ESTRATEGIA_DADOS_E_MODELAGEM.md)
 - [Roadmap](ROADMAP.md)
 - [Dicionário de dados](DICIONARIO_DE_DADOS.md)
 - [Dados](../data/README.md)
@@ -47,7 +46,7 @@ flowchart TD
     E1 --> G1 --> E2 --> G2 --> E3 --> G3 --> E4 --> G4 --> E5 --> G5 --> E6 --> G6 --> E7 --> G7 --> E8
 
     style E1 fill:#4CAF50,color:#fff
-    style E2 fill:#4CAF50,color:#fff
+    style E2 fill:#42A5F5,color:#fff
     style E3 fill:#78909C,color:#fff
     style E4 fill:#78909C,color:#fff
     style E5 fill:#78909C,color:#fff
@@ -191,6 +190,15 @@ flowchart TD
 | Notebook de extração | Notebook `02_extracao_mediapipe` executável | Planejado |
 | Documentação de colunas | Estrutura de colunas documentada no dicionário | Planejado |
 
+### Checkpoints operacionais de dados e escopo
+
+| Gate | Objetivo | Evidência esperada | Status |
+| --- | --- | --- | --- |
+| Gate D1 — Dataset principal | Manter ShanghaiTech Campus como base da execução | Ingestão local validada e documentação sincronizada | Concluído |
+| Gate D2 — Datasets de reforço | Formalizar seleção de datasets adicionais (se houver) | Registro explícito da seleção no roadmap/plano | Planejado |
+| Gate D3 — Vídeos próprios/simulados | Definir escopo para material de defesa (se aplicável) | Registro de cenários e finalidade acadêmica | Planejado |
+| Gate F1 — Features avançadas | Priorizar backlog de features avançadas para Fase 4 | Backlog marcado no dicionário de dados | Planejado |
+
 ---
 
 ## Etapa 3: engenharia de atributos
@@ -292,9 +300,10 @@ flowchart TD
 
 ### Itens de trabalho
 
-- definir abordagens de IA: clusterização, detecção de anomalias, classificação;
+- definir abordagens de IA por níveis (não supervisionado, supervisionado e combinação);
 - treinar modelos não supervisionados (perfis de cena, anomalias);
 - treinar modelos supervisionados com eventos rotulados;
+- avaliar a viabilidade de combinação dos níveis com interpretabilidade;
 - validar balanceamento de classes e tratar viés;
 - ajustar hiperparâmetros e otimizar modelos;
 - calcular métricas de avaliação (acurácia, precision, recall, F1, silhouette);
@@ -314,6 +323,15 @@ flowchart TD
 | Notebook supervisionado | Notebook `06_supervised` executável | Planejado |
 | Comparação de modelos | Tabela comparativa em `reports/models/` | Planejado |
 | Análise de erros | Discussão de limitações e erros dos modelos | Planejado |
+| Nível 3 (combinação) avaliado | Critério para combinação entre níveis documentado | Planejado |
+
+### Estratégia oficial de modelagem por níveis
+
+| Nível | Escopo operacional | Pré-condição |
+| --- | --- | --- |
+| Nível 1 — Não supervisionado | Detectar padrões e outliers sem rótulos | Base processada estável |
+| Nível 2 — Supervisionado | Classificar eventos com rótulos | Convenção de rótulos consolidada |
+| Nível 3 — Combinação + interpretabilidade | Combinar resultados dos níveis 1 e 2 quando comparáveis | Métricas dos níveis anteriores disponíveis |
 
 ---
 
@@ -376,6 +394,10 @@ flowchart TD
 | Limitações registradas | Seção de limitações e próximos passos documentada | Planejado |
 
 ---
+
+## Requisito transversal: interpretabilidade
+
+A interpretabilidade é tratada como requisito transversal nas etapas analíticas e de modelagem. Sempre que houver resultado de modelo, a evidência deve incluir explicação técnica rastreável (por exemplo: importância de variáveis, regras extraídas ou análise de contribuição por feature), respeitando o estágio de maturidade de cada etapa.
 
 ## Definição de pronto por frente
 

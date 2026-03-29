@@ -9,7 +9,6 @@ Este documento organiza a evolução do projeto em fases, marcos e dependências
 - [Arquitetura](ARQUITETURA.md)
 - [Cronograma](CRONOGRAMA.md)
 - [Entregáveis](ENTREGAVEIS.md)
-- [Estratégia de dados e modelagem](ESTRATEGIA_DADOS_E_MODELAGEM.md)
 - [Plano de execução](PLANO_DE_EXECUCAO.md)
 - [Roadmap](ROADMAP.md)
 - [Dicionário de dados](DICIONARIO_DE_DADOS.md)
@@ -118,7 +117,7 @@ flowchart TD
     F7B --> F8
 
     style F1 fill:#4CAF50,color:#fff
-    style F2 fill:#42A5F5,color:#fff
+    style F2 fill:#4CAF50,color:#fff
     style F3 fill:#78909C,color:#fff
     style F4 fill:#78909C,color:#fff
     style F5 fill:#78909C,color:#fff
@@ -175,7 +174,6 @@ flowchart TD
 #### Progresso atual (2026-03-28)
 
 - ✅ **Dataset principal selecionado**: ShanghaiTech Campus (330 treino, 109 teste, 109 GT masks no dataset real)
-  - Estratégia documentada em `docs/ESTRATEGIA_DADOS_E_MODELAGEM.md`
 - ✅ **Estrutura de diretórios criada**: `data/raw/shanghaitech/` com suporte a `training/` e `testing/` locais e `SAMPLE/` versionado
 - ✅ **Mini-dataset sintético**: `data/raw/shanghaitech/SAMPLE/` — 5 vídeos treino × 50 frames, 2 vídeos teste × 30 frames, 2 GT masks `.npy` (310 frames total)
 - ✅ **Loader implementado**: `src/mediapipe_seguranca/shanghaitech_loader.py` — `get_train_videos()`, `get_test_videos_with_gt()`, `load_gt_mask()`, `iter_frames()`
@@ -202,6 +200,12 @@ flowchart TD
 **Método de ingestão**: OpenCV AVI → JPEG frames (640×480, índices sequenciais)
 
 **Status**: READY FOR FASE 3 — Integração com MediaPipe
+
+#### Priorização oficial de dados (fases 3 e 4)
+
+1. **Camada principal (prioridade alta)**: ShanghaiTech Campus, já selecionado e com ingestão validada na Fase 2.
+2. **Camada de reforço (prioridade média, decisão pendente)**: seleção entre CUHK Avenue, UBnormal, UCF-Crime (subset) e/ou MSAD, a ser formalizada por checkpoint.
+3. **Camada de demonstração (prioridade condicionada)**: vídeos próprios/simulados para material de defesa, dependente de planejamento e disponibilidade do grupo.
 
 #### Principais saídas
 
@@ -232,6 +236,12 @@ flowchart TD
 - amostras e inspeções qualitativas;
 - estrutura intermediária de colunas;
 - notebook de extração executável.
+
+#### Checkpoints operacionais para avanço da fase
+
+- **Gate D2 — Datasets de reforço**: registrar no plano de execução quais datasets de reforço foram selecionados (se houver seleção).
+- **Gate D3 — Vídeos próprios/simulados**: registrar escopo, finalidade e restrições da coleta para material de defesa (se aplicável).
+- **Gate F1 — Features avançadas priorizadas**: registrar no dicionário quais features avançadas ficam no backlog da Fase 4.
 
 ### Fase 4: consolidação da base analítica
 
@@ -346,6 +356,16 @@ flowchart TD
 - métricas e matrizes de confusão;
 - comparações em `reports/models/`.
 
+## Estratégia oficial de modelagem por níveis
+
+A progressão de modelagem é mantida como referência oficial de planejamento, sem assumir decisões de implementação além do que já existe no repositório.
+
+| Nível | Objetivo | Estado atual | Gate de avanço |
+| --- | --- | --- | --- |
+| Nível 1 — Não supervisionado | Detectar padrões e outliers sem rótulos | Planejado | Base processada estável e avaliação registrada |
+| Nível 2 — Supervisionado | Classificar eventos com rótulos | Planejado | Convenção de rótulos validada em `data/labels/` |
+| Nível 3 — Ensemble + interpretabilidade | Combinar predições e explicar decisões | Planejado | Resultados dos níveis 1 e 2 comparáveis |
+
 ### Fase 7b: análise prescritiva
 
 **Status**: planejada
@@ -435,9 +455,9 @@ Quando o projeto tiver gráficos finais, narrativa consolidada e visão clara de
 
 As prioridades imediatas recomendadas são:
 
-1. preparar amostras reais em `data/raw/`;
-2. implementar leitura real de vídeo;
-3. conectar MediaPipe à pipeline;
+1. concluir os gates da entrada da Fase 3 (dataset de reforço, vídeos próprios e backlog de features avançadas);
+2. implementar leitura real de vídeo com integração de extração no `mediapipe_extract.py`;
+3. conectar MediaPipe à pipeline com rastreabilidade de saídas intermediárias;
 4. gerar a primeira base processada não sintética;
 5. transformar os notebooks planejados em notebooks executáveis.
 

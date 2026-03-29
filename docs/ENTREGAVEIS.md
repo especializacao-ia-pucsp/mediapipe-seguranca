@@ -8,7 +8,6 @@ Este documento refina os entregáveis previstos para o projeto e organiza o que 
 - [Contribuição](../CONTRIBUTING.md)
 - [Arquitetura](ARQUITETURA.md)
 - [Cronograma](CRONOGRAMA.md)
-- [Estratégia de dados e modelagem](ESTRATEGIA_DADOS_E_MODELAGEM.md)
 - [Plano de execução](PLANO_DE_EXECUCAO.md)
 - [Roadmap](ROADMAP.md)
 - [Dicionário de dados](DICIONARIO_DE_DADOS.md)
@@ -40,6 +39,7 @@ Padronizar a evolução do repositório para que o projeto avance com clareza t�
 | Base intermediária | planejada | Saídas parciais da extração e preparação | `data/interim/` | Arquivos rastreáveis por etapa |
 | Base processada | planejada | Features por frame e por janela | `data/processed/` | Dataset pronto para análise e modelagem |
 | Rótulos | planejado | Classes e anotações de eventos | `data/labels/` | Convenção de rótulos documentada |
+| Priorização de dados por camadas | ✅ | Camada principal oficial: ShanghaiTech Campus; camadas de reforço e de demonstração mantidas como planejamento | `docs/ROADMAP.md`, `docs/PLANO_DE_EXECUCAO.md` | Camada principal concluída e checkpoints de camadas adicionais registrados |
 
 ### Engenharia
 
@@ -75,6 +75,12 @@ Padronizar a evolução do repositório para que o projeto avance com clareza t�
 | Supervisionado | Classificação de eventos rotulados | `src/` e `reports/models/` | Métricas e avaliação registradas |
 | Comparação de modelos | Tabela comparativa entre abordagens | `reports/models/` | Comparação com métricas e interpretação |
 
+| Entregável por nível | Status | Descrição | Local previsto | Critério de aceite |
+| --- | --- | --- | --- | --- |
+| Nível 1 — Base não supervisionada | planejado | Fluxo inicial sem rótulos para outliers e perfis | `src/mediapipe_seguranca/train_unsupervised.py`, `reports/models/` | Métricas e interpretação publicadas |
+| Nível 2 — Base supervisionada | planejado | Fluxo com rótulos para classificação de eventos | `src/mediapipe_seguranca/train_supervised.py`, `reports/models/` | Métricas, erros e limitações documentados |
+| Nível 3 — Combinação + interpretabilidade | planejado | Combinação entre níveis anteriores com explicação técnica | `reports/models/`, `reports/defesa/` | Critério de combinação e explicabilidade registrados |
+
 ### Análise prescritiva
 
 | Entregável | Descrição | Local previsto | Critério de aceite |
@@ -91,6 +97,7 @@ Padronizar a evolução do repositório para que o projeto avance com clareza t�
 | Linhagem de dados | Rastreabilidade raw - interim - processed | `docs/ARQUITETURA.md` | Fluxo de dados documentado e verificável |
 | Qualidade de dados | Validações de completude, tipos e ranges | `notebooks/` e `reports/eda/` | Validações executadas e documentadas |
 | Metodologia CRISP-DM | Documentação do ciclo CRISP-DM adaptado | `docs/PLANO_DE_EXECUCAO.md`, `docs/CRONOGRAMA.md` | Fases CRISP-DM mapeadas ao projeto |
+| Interpretabilidade analítica | Requisito transversal para explicar resultados de análise/modelagem | `docs/PLANO_DE_EXECUCAO.md`, `docs/ARQUITETURA.md`, `reports/models/` | Evidência explicativa registrada junto aos resultados |
 
 ### Comunicação e defesa
 

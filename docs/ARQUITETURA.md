@@ -8,7 +8,6 @@ Este documento descreve a arquitetura lógica do projeto, conectando objetivos a
 - [Contribuição](../CONTRIBUTING.md)
 - [Cronograma](CRONOGRAMA.md)
 - [Entregáveis](ENTREGAVEIS.md)
-- [Estratégia de dados e modelagem](ESTRATEGIA_DADOS_E_MODELAGEM.md)
 - [Plano de execução](PLANO_DE_EXECUCAO.md)
 - [Roadmap](ROADMAP.md)
 - [Dicionário de dados](DICIONARIO_DE_DADOS.md)
@@ -166,6 +165,10 @@ Responsável por transformar resultados em material utilizável para análise e 
 - notebooks: `notebooks/`
 - relatórios: `reports/`
 - planejamento: `docs/`
+
+## Requisito transversal de interpretabilidade
+
+A interpretabilidade é requisito transversal entre as camadas 4 e 5. Sempre que houver saída de modelagem, o fluxo arquitetural deve prever evidência explicativa associada ao resultado (por exemplo: importância de variáveis, análise de contribuição por feature ou regras derivadas), preservando rastreabilidade entre dados de entrada, predição e evidência publicada.
 
 ---
 

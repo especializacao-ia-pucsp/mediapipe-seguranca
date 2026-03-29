@@ -9,7 +9,6 @@ Este documento descreve os principais campos, métricas e rótulos previstos no 
 - [Arquitetura](ARQUITETURA.md)
 - [Cronograma](CRONOGRAMA.md)
 - [Entregáveis](ENTREGAVEIS.md)
-- [Estratégia de dados e modelagem](ESTRATEGIA_DADOS_E_MODELAGEM.md)
 - [Plano de execução](PLANO_DE_EXECUCAO.md)
 - [Roadmap](ROADMAP.md)
 - [Dados](../data/README.md)
@@ -189,17 +188,22 @@ Essas colunas formam o núcleo mínimo do experimento atual e servem como ponto 
 - campos categóricos devem ter taxonomia estável, especialmente em `label`;
 - sempre que a estrutura do dataset mudar, este documento deve ser atualizado.
 
-## Campos esperados em versões futuras
+## Backlog oficial de features avançadas
 
-Conforme a integração com MediaPipe evoluir, o dicionário poderá incorporar colunas como:
+A tabela abaixo consolida as features avançadas em planejamento e diferencia o que já possui suporte implementado no repositório.
 
-- coordenadas normalizadas de landmarks;
-- ângulos articulares;
-- direção de deslocamento por trilha;
-- ocupação por zona;
-- permanência por área sensível;
-- densidade espacial por região;
-- score temporal de anomalia por segmento.
+| Feature candidata | Granularidade alvo | Status atual | Campo atual relacionado |
+| --- | --- | --- | --- |
+| `velocidade_centroide` | frame e janela | parcialmente implementado (proxy) | `estimated_speed`, `estimated_speed_mean` |
+| `angulos_articulares` | frame | planejado | sem campo atual |
+| `distancia_interpessoal` | frame e janela | planejado | sem campo atual |
+| `curvatura_trajetoria` | janela | planejado | sem campo atual |
+| `jerk_centroide` | janela | planejado | sem campo atual |
+| `dwell_time_por_zona` | janela | planejado | sem campo atual |
+| `movement_entropy` | janela | planejado | sem campo atual |
+| `posture_stability_index` | janela | planejado | sem campo atual |
+| `gait_regularity` | janela | planejado | sem campo atual |
+| `interaction_proximity` | janela | planejado | sem campo atual |
 
 ## Relação com o restante da documentação
 
