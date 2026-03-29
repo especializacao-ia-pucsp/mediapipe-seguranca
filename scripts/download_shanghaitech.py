@@ -62,6 +62,8 @@ KAGGLE_DATASET = "defeatthefake/shanghaitech-campus-dataset"
 # ---------------------------------------------------------------------------
 
 RELEVANT_ARCHIVE_EXTENSIONS = (".tar", ".tar.gz", ".tgz", ".zip")
+NPY_GLOB = "*.npy"
+DOWNLOADER_USER_AGENT = "mediapipe-seguranca-downloader/1.0"
 
 
 def _ensure_dirs() -> None:
@@ -72,19 +74,19 @@ def _ensure_dirs() -> None:
 def _count_images(directory: Path) -> int:
     if not directory.exists():
         return 0
-    return sum(1 for f in directory.rglob("*.jpg")) + sum(1 for f in directory.rglob("*.png"))
+    return sum(1 for _ in directory.rglob("*.jpg")) + sum(1 for _ in directory.rglob("*.png"))
 
 
 def _count_masks(directory: Path) -> int:
     if not directory.exists():
         return 0
-    return sum(1 for f in directory.glob("*.npy"))
+    return sum(1 for _ in directory.glob(NPY_GLOB))
 
 
 def _dataset_counts() -> tuple[int, int, int]:
     train_dirs = [p for p in TRAINING_FRAMES.iterdir() if p.is_dir()] if TRAINING_FRAMES.exists() else []
     test_dirs = [p for p in TESTING_FRAMES.iterdir() if p.is_dir()] if TESTING_FRAMES.exists() else []
-    masks = list(TESTING_MASKS.glob("*.npy")) if TESTING_MASKS.exists() else []
+    masks = list(TESTING_MASKS.glob(NPY_GLOB)) if TESTING_MASKS.exists() else []
     return len(train_dirs), len(test_dirs), len(masks)
 
 
@@ -138,24 +140,33 @@ def _path_tail_equals(path: Path, tail_parts: tuple[str, ...]) -> bool:
     return path_tail == [p.lower() for p in tail_parts]
 
 
+def _move_path_if_absent(item: Path, target: Path) -> int:
+    if target.exists():
+        return 0
+    shutil.move(str(item), str(target))
+    return 1
+
+
+def _merge_nested_directory(item: Path, target: Path) -> int:
+    moved = _merge_dir_contents(item, target)
+    if item.exists() and not any(item.iterdir()):
+        item.rmdir()
+    return moved
+
+
+def _merge_item_into_target(item: Path, target: Path) -> int:
+    if item.is_dir() and target.exists() and target.is_dir():
+        return _merge_nested_directory(item, target)
+    return _move_path_if_absent(item, target)
+
+
 def _merge_dir_contents(src: Path, dest: Path) -> int:
     """Move files/subdirectories from src into dest and return moved item count."""
     moved = 0
     dest.mkdir(parents=True, exist_ok=True)
-    for item in list(src.iterdir()):
+    for item in src.iterdir():
         target = dest / item.name
-        if item.is_dir():
-            if target.exists() and target.is_dir():
-                moved += _merge_dir_contents(item, target)
-                if item.exists() and not any(item.iterdir()):
-                    item.rmdir()
-            elif not target.exists():
-                shutil.move(str(item), str(target))
-                moved += 1
-        else:
-            if not target.exists():
-                shutil.move(str(item), str(target))
-                moved += 1
+        moved += _merge_item_into_target(item, target)
     return moved
 
 
@@ -174,43 +185,46 @@ def _find_dirs_matching_tail(root: Path, tail_parts: tuple[str, ...]) -> list[Pa
     return matches
 
 
+def _normalize_tail_to_dest(root: Path, tail_parts: tuple[str, ...], dest: Path) -> int:
+    moved = 0
+    for candidate in _find_dirs_matching_tail(root, tail_parts):
+        if candidate.resolve() == dest.resolve():
+            continue
+        moved += _merge_dir_contents(candidate, dest)
+    return moved
+
+
+def _move_subdirs_to_frames(parent_dir: Path, frames_dir: Path, reserved_names: set[str]) -> int:
+    moved = 0
+    if parent_dir.resolve() != frames_dir.parent.resolve():
+        return moved
+
+    for child in parent_dir.iterdir():
+        if child.is_dir() and child.name not in reserved_names:
+            target = frames_dir / child.name
+            if not target.exists():
+                shutil.move(str(child), str(target))
+                moved += 1
+    return moved
+
+
+def _normalize_top_level_dirs(
+    root: Path, parent_tail: tuple[str, ...], frames_dir: Path, reserved_names: set[str]
+) -> int:
+    moved = 0
+    for parent_dir in _find_dirs_matching_tail(root, parent_tail):
+        moved += _move_subdirs_to_frames(parent_dir, frames_dir, reserved_names)
+    return moved
+
+
 def _normalize_dataset_layout() -> None:
     """Normalize extracted data into training/frames, testing/frames, testing/test_frame_mask."""
     moved_total = 0
-
-    for candidate in _find_dirs_matching_tail(DEST, ("training", "frames")):
-        if candidate.resolve() == TRAINING_FRAMES.resolve():
-            continue
-        moved_total += _merge_dir_contents(candidate, TRAINING_FRAMES)
-
-    for candidate in _find_dirs_matching_tail(DEST, ("testing", "frames")):
-        if candidate.resolve() == TESTING_FRAMES.resolve():
-            continue
-        moved_total += _merge_dir_contents(candidate, TESTING_FRAMES)
-
-    for candidate in _find_dirs_matching_tail(DEST, ("testing", "test_frame_mask")):
-        if candidate.resolve() == TESTING_MASKS.resolve():
-            continue
-        moved_total += _merge_dir_contents(candidate, TESTING_MASKS)
-
-    # Some archives place videos directly under training/ or testing/.
-    for training_dir in _find_dirs_matching_tail(DEST, ("training",)):
-        if training_dir.resolve() == TRAINING_FRAMES.parent.resolve():
-            for child in list(training_dir.iterdir()):
-                if child.is_dir() and child.name != "frames":
-                    target = TRAINING_FRAMES / child.name
-                    if not target.exists():
-                        shutil.move(str(child), str(target))
-                        moved_total += 1
-
-    for testing_dir in _find_dirs_matching_tail(DEST, ("testing",)):
-        if testing_dir.resolve() == TESTING_FRAMES.parent.resolve():
-            for child in list(testing_dir.iterdir()):
-                if child.is_dir() and child.name not in {"frames", "test_frame_mask"}:
-                    target = TESTING_FRAMES / child.name
-                    if not target.exists():
-                        shutil.move(str(child), str(target))
-                        moved_total += 1
+    moved_total += _normalize_tail_to_dest(DEST, ("training", "frames"), TRAINING_FRAMES)
+    moved_total += _normalize_tail_to_dest(DEST, ("testing", "frames"), TESTING_FRAMES)
+    moved_total += _normalize_tail_to_dest(DEST, ("testing", "test_frame_mask"), TESTING_MASKS)
+    moved_total += _normalize_top_level_dirs(DEST, ("training",), TRAINING_FRAMES, {"frames"})
+    moved_total += _normalize_top_level_dirs(DEST, ("testing",), TESTING_FRAMES, {"frames", "test_frame_mask"})
 
     if moved_total > 0:
         print(f"  Normalized extracted layout ({moved_total} items moved)")
@@ -225,8 +239,12 @@ def _gdown_available() -> bool:
         return False
 
 
+def _build_request(url: str) -> urllib.request.Request:
+    return urllib.request.Request(url, headers={"User-Agent": DOWNLOADER_USER_AGENT})
+
+
 def _http_get_json(url: str, timeout: int = 60) -> dict | None:
-    request = urllib.request.Request(url, headers={"User-Agent": "mediapipe-seguranca-downloader/1.0"})
+    request = _build_request(url)
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
             payload = response.read().decode("utf-8", errors="replace")
@@ -240,7 +258,7 @@ def _http_get_json(url: str, timeout: int = 60) -> dict | None:
 
 def _resolve_short_url(url: str) -> str | None:
     """Resolve URL redirects and return final URL."""
-    request = urllib.request.Request(url, headers={"User-Agent": "mediapipe-seguranca-downloader/1.0"})
+    request = _build_request(url)
     try:
         with urllib.request.urlopen(request, timeout=60) as response:
             return response.geturl()
@@ -262,7 +280,7 @@ def _is_archive_candidate(name: str) -> bool:
 
 
 def _download_file(url: str, output_path: Path) -> bool:
-    request = urllib.request.Request(url, headers={"User-Agent": "mediapipe-seguranca-downloader/1.0"})
+    request = _build_request(url)
     try:
         with urllib.request.urlopen(request, timeout=300) as response:
             output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -290,36 +308,48 @@ def _fetch_onedrive_driveitem(share_token: str) -> tuple[dict, str] | None:
     return None
 
 
-def _list_onedrive_archives_from_folder(share_token: str, api_base: str) -> list[dict]:
+def _onedrive_payload_items(payload: dict | None) -> list[dict]:
+    if not isinstance(payload, dict):
+        return []
+    value = payload.get("value", [])
+    if not isinstance(value, list):
+        return []
+    return [item for item in value if isinstance(item, dict)]
+
+
+def _onedrive_next_link(payload: dict | None) -> str:
+    if not isinstance(payload, dict):
+        return ""
+    next_candidate = payload.get("@odata.nextLink")
+    return next_candidate if isinstance(next_candidate, str) else ""
+
+
+def _iter_onedrive_children(share_token: str, api_base: str) -> list[dict]:
     token_q = urllib.parse.quote(share_token, safe="!")
-    archives: list[dict] = []
     next_url = f"{api_base}/shares/{token_q}/driveItem/children?$top=200"
+    items: list[dict] = []
 
     while next_url:
         payload = _http_get_json(next_url)
         if payload is None:
             break
 
-        value = payload.get("value", []) if isinstance(payload, dict) else []
-        if not isinstance(value, list):
-            value = []
+        items.extend(_onedrive_payload_items(payload))
+        next_url = _onedrive_next_link(payload)
 
-        for item in value:
-            if not isinstance(item, dict):
-                continue
-            name = str(item.get("name", ""))
-            if _is_archive_candidate(name):
-                archives.append(item)
+    return items
 
-        next_candidate = payload.get("@odata.nextLink") if isinstance(payload, dict) else None
-        next_url = next_candidate if isinstance(next_candidate, str) else ""
 
+def _list_onedrive_archives_from_folder(share_token: str, api_base: str) -> list[dict]:
+    archives: list[dict] = []
+    for item in _iter_onedrive_children(share_token, api_base):
+        name = str(item.get("name", ""))
+        if _is_archive_candidate(name):
+            archives.append(item)
     return archives
 
 
-def _try_onedrive_share(url: str, dest: Path) -> bool:
-    print(f"  Trying official OneDrive share: {url}")
-
+def _candidate_onedrive_urls(url: str) -> list[str]:
     final_url = _resolve_short_url(url)
     if final_url:
         print(f"  Resolved OneDrive URL: {final_url}")
@@ -329,9 +359,29 @@ def _try_onedrive_share(url: str, dest: Path) -> bool:
     candidate_urls: list[str] = [url]
     if final_url and final_url not in candidate_urls:
         candidate_urls.insert(0, final_url)
+    return candidate_urls
 
-    archives_to_download: list[tuple[str, str]] = []
 
+def _collect_archives_from_driveitem(driveitem: dict, api_base: str, share_token: str) -> list[tuple[str, str]]:
+    archives: list[tuple[str, str]] = []
+    if "folder" in driveitem:
+        print("  OneDrive share appears to be a folder; listing children")
+        for item in _list_onedrive_archives_from_folder(share_token, api_base):
+            name = str(item.get("name", "download.bin"))
+            download_url = item.get("@microsoft.graph.downloadUrl")
+            if isinstance(download_url, str):
+                archives.append((name, download_url))
+        return archives
+
+    name = str(driveitem.get("name", "download.bin"))
+    download_url = driveitem.get("@microsoft.graph.downloadUrl")
+    if isinstance(download_url, str) and _is_archive_candidate(name):
+        print("  OneDrive share appears to be a file")
+        archives.append((name, download_url))
+    return archives
+
+
+def _find_onedrive_archives(candidate_urls: list[str]) -> list[tuple[str, str]]:
     for source_url in candidate_urls:
         share_token = _to_share_token(source_url)
         driveitem_payload = _fetch_onedrive_driveitem(share_token)
@@ -339,45 +389,49 @@ def _try_onedrive_share(url: str, dest: Path) -> bool:
             continue
 
         driveitem, api_base = driveitem_payload
-        if "folder" in driveitem:
-            print("  OneDrive share appears to be a folder; listing children")
-            children_archives = _list_onedrive_archives_from_folder(share_token, api_base)
-            for item in children_archives:
-                name = str(item.get("name", "download.bin"))
-                download_url = item.get("@microsoft.graph.downloadUrl")
-                if isinstance(download_url, str):
-                    archives_to_download.append((name, download_url))
-        else:
-            name = str(driveitem.get("name", "download.bin"))
-            download_url = driveitem.get("@microsoft.graph.downloadUrl")
-            if isinstance(download_url, str) and _is_archive_candidate(name):
-                print("  OneDrive share appears to be a file")
-                archives_to_download.append((name, download_url))
+        archives = _collect_archives_from_driveitem(driveitem, api_base, share_token)
+        if archives:
+            return archives
+    return []
 
-        if archives_to_download:
-            break
 
-    if not archives_to_download:
-        print("  OneDrive API did not return downloadable archive files")
-        return False
-
+def _download_onedrive_archives(archives_to_download: list[tuple[str, str]], dest: Path) -> list[Path]:
     download_dir = dest / "_downloads_onedrive"
     download_dir.mkdir(parents=True, exist_ok=True)
-
     downloaded_archives: list[Path] = []
+
     for name, download_url in archives_to_download:
         output_path = download_dir / name
         print(f"  Downloading from OneDrive: {name}")
         if _download_file(download_url, output_path):
             downloaded_archives.append(output_path)
+    return downloaded_archives
+
+
+def _extract_archives_to_dest(archives: list[Path], dest: Path) -> bool:
+    extracted_any = False
+    for archive_path in archives:
+        extracted_any = _extract_archive(archive_path, dest) or extracted_any
+    return extracted_any
+
+
+def _try_onedrive_share(url: str, dest: Path) -> bool:
+    print(f"  Trying official OneDrive share: {url}")
+
+    candidate_urls = _candidate_onedrive_urls(url)
+    archives_to_download = _find_onedrive_archives(candidate_urls)
+
+    if not archives_to_download:
+        print("  OneDrive API did not return downloadable archive files")
+        return False
+
+    downloaded_archives = _download_onedrive_archives(archives_to_download, dest)
 
     if not downloaded_archives:
         print("  OneDrive download did not retrieve usable archives")
         return False
 
-    extracted_any = False
-    for archive_path in downloaded_archives:
-        extracted_any = _extract_archive(archive_path, dest) or extracted_any
+    extracted_any = _extract_archives_to_dest(downloaded_archives, dest)
 
     _normalize_dataset_layout()
     return extracted_any and _real_dataset_complete()
@@ -540,7 +594,7 @@ This creates `data/raw/shanghaitech/SAMPLE/` with synthetic frames and GT masks.
 def _write_status(method: str, sample_auto_generated: bool = False) -> None:
     train_dirs = [p for p in TRAINING_FRAMES.iterdir() if p.is_dir()] if TRAINING_FRAMES.exists() else []
     test_dirs = [p for p in TESTING_FRAMES.iterdir() if p.is_dir()] if TESTING_FRAMES.exists() else []
-    masks = list(TESTING_MASKS.glob("*.npy")) if TESTING_MASKS.exists() else []
+    masks = list(TESTING_MASKS.glob(NPY_GLOB)) if TESTING_MASKS.exists() else []
     train_imgs = _count_images(TRAINING_FRAMES)
     test_imgs = _count_images(TESTING_FRAMES)
 
@@ -623,6 +677,58 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _run_strategy_onedrive() -> tuple[bool, str]:
+    print("\n[Strategy A] Official OneDrive share...")
+    success = _try_onedrive_share(ONEDRIVE_SHARE_URL, DEST) and _real_dataset_complete()
+    return success, "onedrive_share" if success else "none"
+
+
+def _run_strategy_gdrive_folders() -> tuple[bool, str]:
+    print("\n[Strategy B] Google Drive folder download...")
+    _try_gdrive_folder(GDRIVE_TRAIN_FOLDER, TRAINING_FRAMES, "training")
+    _try_gdrive_folder(GDRIVE_TEST_FOLDER, TESTING_FRAMES.parent, "testing")
+    _normalize_dataset_layout()
+    success = _real_dataset_complete()
+    return success, "gdrive_folder" if success else "none"
+
+
+def _try_first_gdrive_file(ids: list[str], dest_dir: Path, label: str) -> bool:
+    for fid in ids:
+        if _try_gdrive_file(fid, dest_dir, label):
+            return True
+    return False
+
+
+def _run_strategy_gdrive_files() -> tuple[bool, str]:
+    print("\n[Strategy C] Google Drive file IDs...")
+    downloaded_any = False
+    downloaded_any = _try_first_gdrive_file(CANDIDATE_TRAIN_IDS, TRAINING_FRAMES, "training") or downloaded_any
+    downloaded_any = _try_first_gdrive_file(CANDIDATE_TEST_IDS, TESTING_FRAMES.parent, "testing") or downloaded_any
+
+    if downloaded_any:
+        _normalize_dataset_layout()
+    success = downloaded_any and _real_dataset_complete()
+    return success, "gdrive_file" if success else "none"
+
+
+def _run_strategy_kaggle() -> tuple[bool, str]:
+    print("\n[Strategy D] Kaggle API...")
+    if not _try_kaggle(DEST):
+        return False, "none"
+    _normalize_dataset_layout()
+    success = _real_dataset_complete()
+    return success, "kaggle" if success else "none"
+
+
+def _run_fallback(skip_sample: bool) -> bool:
+    print("\n[Fallback] Real dataset download did not reach minimum operational structure.")
+    _write_instructions()
+    if skip_sample:
+        print("  --skip-sample enabled: skipping SAMPLE auto-generation.")
+        return False
+    return _generate_sample_dataset()
+
+
 def main() -> None:
     args = _parse_args()
 
@@ -645,61 +751,22 @@ def main() -> None:
 
     success = False
     method = "none"
-
-    # ----- Strategy A: Official OneDrive share -----
-    print("\n[Strategy A] Official OneDrive share...")
-    if _try_onedrive_share(ONEDRIVE_SHARE_URL, DEST):
-        success = _real_dataset_complete()
-        method = "onedrive_share" if success else "none"
-
-    # ----- Strategy B: Google Drive folders -----
-    if not success:
-        print("\n[Strategy B] Google Drive folder download...")
-        ok_train = _try_gdrive_folder(GDRIVE_TRAIN_FOLDER, TRAINING_FRAMES, "training")
-        ok_test = _try_gdrive_folder(GDRIVE_TEST_FOLDER, TESTING_FRAMES.parent, "testing")
-        _ = ok_train, ok_test
-        _normalize_dataset_layout()
-        if _real_dataset_complete():
-            success = True
-            method = "gdrive_folder"
-
-    # ----- Strategy C: Google Drive file IDs -----
-    if not success:
-        print("\n[Strategy C] Google Drive file IDs...")
-        downloaded_any = False
-        for fid in CANDIDATE_TRAIN_IDS:
-            if _try_gdrive_file(fid, TRAINING_FRAMES, "training"):
-                downloaded_any = True
-                break
-        for fid in CANDIDATE_TEST_IDS:
-            if _try_gdrive_file(fid, TESTING_FRAMES.parent, "testing"):
-                downloaded_any = True
-                break
-        if downloaded_any:
-            _normalize_dataset_layout()
-            if _real_dataset_complete():
-                success = True
-                method = "gdrive_file"
-
-    # ----- Strategy D: Kaggle -----
-    if not success:
-        print("\n[Strategy D] Kaggle API...")
-        if _try_kaggle(DEST):
-            _normalize_dataset_layout()
-            if _real_dataset_complete():
-                success = True
-                method = "kaggle"
-
     sample_auto_generated = False
 
-    # ----- Fallback -----
+    strategies = [
+        _run_strategy_onedrive,
+        _run_strategy_gdrive_folders,
+        _run_strategy_gdrive_files,
+        _run_strategy_kaggle,
+    ]
+
+    for strategy in strategies:
+        if success:
+            break
+        success, method = strategy()
+
     if not success:
-        print("\n[Fallback] Real dataset download did not reach minimum operational structure.")
-        _write_instructions()
-        if args.skip_sample:
-            print("  --skip-sample enabled: skipping SAMPLE auto-generation.")
-        else:
-            sample_auto_generated = _generate_sample_dataset()
+        sample_auto_generated = _run_fallback(args.skip_sample)
 
     _write_status(method=method, sample_auto_generated=sample_auto_generated)
 
