@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from .build_processed_base import build_processed_base
 from .config import get_project_paths
 from .feature_engineering import aggregate_window_features
 from .mediapipe_extract import generate_demo_observations
@@ -37,11 +38,10 @@ def run_demo_pipeline(output_path: Path | None = None) -> dict[str, object]:
 
 
 def _adapt_real_frames_to_features(frames_df: pd.DataFrame, window_size: int = 15) -> pd.DataFrame:
-    """Adapt the real extraction frame schema to the feature_engineering input.
+    """DEPRECATED (Fase 4): adaptador heurístico mantido para compatibilidade.
 
-    Maps MediaPipe extraction columns to the loose schema expected by
-    :func:`enrich_frame_features` while preserving ``video_id`` and the raw
-    extraction columns alongside.
+    Substituído por :mod:`feature_engineering_real`. Não é mais usado pelo
+    `run_real_pipeline`; permanece apenas como referência/legado.
     """
     if frames_df.empty:
         return frames_df
@@ -77,7 +77,7 @@ def run_real_pipeline(
     window_size: int = 15,
     output_path: Path | None = None,
 ) -> dict[str, object]:
-    """Run extraction + feature engineering using real ShanghaiTech frames."""
+    """Run extraction + Fase 4 processed base using real ShanghaiTech frames."""
     from .extract_runner import run_extraction  # local import (mediapipe heavy)
 
     paths = get_project_paths()
@@ -87,34 +87,47 @@ def run_real_pipeline(
         limit_videos=limit_videos,
     )
 
-    frames_root = paths.interim_mediapipe_frames
-    parquet_files: list[Path] = []
-    for sub in ("training", "testing"):
-        sub_dir = frames_root / sub
-        if sub_dir.exists():
-            parquet_files.extend(sorted(sub_dir.glob("*.parquet")))
+    splits: tuple[str, ...]
+    if split == "both":
+        splits = ("training", "testing")
+    else:
+        splits = (split,)
 
-    if not parquet_files:
-        raise RuntimeError(
-            "Nenhum parquet encontrado em data/interim/mediapipe_frames/. "
-            "Verifique se o dataset ShanghaiTech está disponível."
-        )
+    summary = build_processed_base(
+        interim_dir=paths.interim_mediapipe_frames,
+        output_dir=paths.data_processed,
+        window_size=window_size,
+        splits=splits,
+    )
 
-    frames_df = pd.concat([pd.read_parquet(p) for p in parquet_files], ignore_index=True)
-    adapted = _adapt_real_frames_to_features(frames_df, window_size=window_size)
-    enriched = enrich_frame_features(adapted)
-    window_features = aggregate_window_features(enriched)
-
-    destination = output_path or paths.data_processed / "window_features_real.csv"
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    window_features.to_csv(destination, index=False)
+    # If a custom output_path was provided, also write window features there.
+    if output_path is not None:
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        pd.read_parquet(summary["window_features_path"]).to_csv(output_path, index=False)
+        summary["window_features_path"] = str(output_path)
 
     return {
-        "rows": int(len(window_features)),
-        "videos": int(manifest["video_id"].nunique()) if not manifest.empty else 0,
-        "frames": int(len(frames_df)),
-        "output_path": str(destination),
+        "rows": int(summary["windows"]),
+        "videos": int(manifest["video_id"].nunique()) if not manifest.empty else int(summary["videos"]),
+        "frames": int(summary["frames"]),
+        "output_path": summary["window_features_path"],
+        "quality_report_path": summary["quality_report_path"],
     }
+
+
+def run_processed_base_pipeline(
+    window_size: int = 15,
+    splits: tuple[str, ...] = ("training", "testing"),
+) -> dict[str, object]:
+    """Re-build the processed base from existing interim parquets (no extraction)."""
+    paths = get_project_paths()
+    return build_processed_base(
+        interim_dir=paths.interim_mediapipe_frames,
+        output_dir=paths.data_processed,
+        window_size=window_size,
+        splits=splits,
+    )
 
 
 def run_pipeline(
@@ -123,8 +136,9 @@ def run_pipeline(
     limit_videos: int | None = None,
     frame_stride: int = 5,
     output_path: Path | None = None,
+    window_size: int = 15,
 ) -> dict[str, object]:
-    """Dispatch to the demo or real pipeline."""
+    """Dispatch to the demo, real or processed-base pipeline."""
     if mode == "demo":
         return run_demo_pipeline(output_path=output_path)
     if mode == "real":
@@ -133,17 +147,26 @@ def run_pipeline(
             limit_videos=limit_videos,
             frame_stride=frame_stride,
             output_path=output_path,
+            window_size=window_size,
         )
-    raise ValueError(f"mode inválido: {mode!r} (use 'demo' ou 'real')")
+    if mode == "processed":
+        if split == "both":
+            splits: tuple[str, ...] = ("training", "testing")
+        elif split in ("training", "testing"):
+            splits = (split,)
+        else:
+            splits = ("training", "testing")
+        return run_processed_base_pipeline(window_size=window_size, splits=splits)
+    raise ValueError(f"mode inválido: {mode!r} (use 'demo', 'real' ou 'processed')")
 
 
 def build_cli_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Pipeline do projeto MediaPipe Segurança.")
     parser.add_argument(
         "--mode",
-        choices=["demo", "real"],
+        choices=["demo", "real", "processed"],
         default="demo",
-        help="Modo de execução: 'demo' (sintético) ou 'real' (MediaPipe + ShanghaiTech).",
+        help="Modo de execução: 'demo' (sintético), 'real' (extrai + processa) ou 'processed' (só processa).",
     )
     parser.add_argument(
         "--split",
@@ -169,6 +192,12 @@ def build_cli_parser() -> argparse.ArgumentParser:
         default=None,
         help="Caminho opcional para salvar o CSV de features por janela.",
     )
+    parser.add_argument(
+        "--window-size",
+        type=int,
+        default=15,
+        help="Tamanho da janela (frames) para agregação.",
+    )
     return parser
 
 
@@ -181,6 +210,7 @@ def main(argv: list[str] | None = None) -> int:
         limit_videos=args.limit_videos,
         frame_stride=args.frame_stride,
         output_path=args.output,
+        window_size=args.window_size,
     )
 
     if args.mode == "demo":
@@ -189,10 +219,18 @@ def main(argv: list[str] | None = None) -> int:
         print(f"- distribuição de rótulos: {result['labels']}")
         print(f"- acurácia supervisionada (baseline): {result['supervised_accuracy']:.3f}")
         print(f"- arquivo gerado: {result['output_path']}")
-    else:
+    elif args.mode == "real":
         print("Pipeline real (MediaPipe + ShanghaiTech) executada com sucesso.")
         print(f"- vídeos processados: {result['videos']}")
         print(f"- frames extraídos: {result['frames']}")
         print(f"- janelas: {result['rows']}")
         print(f"- arquivo gerado: {result['output_path']}")
+        print(f"- relatório de qualidade: {result['quality_report_path']}")
+    else:  # processed
+        print("Base processada (Fase 4) gerada com sucesso.")
+        print(f"- vídeos: {result['videos']}")
+        print(f"- frames: {result['frames']}")
+        print(f"- janelas: {result['windows']}")
+        print(f"- diretório: {result['output_dir']}")
+        print(f"- relatório de qualidade: {result['quality_report_path']}")
     return 0

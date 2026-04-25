@@ -113,6 +113,58 @@ A extração real com MediaPipe está **implementada e populada** desde a conclu
 | `processing_seconds` | float | Tempo total de processamento do vídeo, em segundos. |
 | `mediapipe_version` | string | Versão do pacote MediaPipe utilizada na extração. |
 
+## Base analítica consolidada (Fase 4)
+
+Estes esquemas são gerados por [src/mediapipe_seguranca/feature_engineering_real.py](../src/mediapipe_seguranca/feature_engineering_real.py) e materializados em `data/processed/frame_features_real.{parquet,csv}` e `data/processed/window_features_real.{parquet,csv}`. Veja também [data/processed/data_quality_report.json](../data/processed/data_quality_report.json) no mesmo diretório (`pipeline_version=fase4-v1`).
+
+### Tabela A — `frame_features_real` (`FRAME_FEATURES_SCHEMA`)
+
+| Coluna | Tipo | Descrição |
+| --- | --- | --- |
+| `video_id` | string | identificador do vídeo |
+| `frame_index` | int64 | índice do frame |
+| `window_id` | int64 | `frame_index // window_size` |
+| `num_people_detected` | int | pessoas detectadas (Pose ou fallback) |
+| `mean_pose_visibility` | float | média de visibilidade dos landmarks; `NaN` se sem pose |
+| `bbox_area_total` | float | soma das áreas das bboxes (px²) |
+| `mean_bbox_area` | float | média das áreas das bboxes; `NaN` se sem detecção |
+| `motion_proxy` | float | diferença absoluta média frame-a-frame em escala de cinza |
+| `detector_fallback_used` | bool | `True` se Object Detector entrou como fallback |
+| `motion_proxy_norm` | float [0,1] | `motion_proxy` normalizado por vídeo (max-scaling) |
+| `bbox_area_per_person` | float | `bbox_area_total / max(num_people_detected, 1)` |
+| `is_dense_scene` | bool | `num_people_detected >= 4` |
+| `is_empty_scene` | bool | `num_people_detected == 0` |
+| `pose_quality` | float [0,1] | `mean_pose_visibility` (NaN preservado) |
+
+### Tabela B — `window_features_real` (`WINDOW_FEATURES_SCHEMA`)
+
+| Coluna | Tipo | Descrição |
+| --- | --- | --- |
+| `video_id`, `window_id` | chave | chave única |
+| `frames_in_window` | int | contagem |
+| `num_people_detected_{mean,std,min,max}` | float | estatísticas |
+| `people_peak` | int | máximo |
+| `people_var` | float | variância (`NaN` se 1 frame) |
+| `mean_pose_visibility_{mean,std}` | float | estatísticas |
+| `bbox_area_total_{mean,std}` | float | estatísticas |
+| `mean_bbox_area_{mean,std}` | float | estatísticas |
+| `motion_proxy_{mean,std}` | float | estatísticas |
+| `motion_proxy_norm_{mean,std}` | float | estatísticas |
+| `motion_delta` | float | `motion_proxy_norm.max() - motion_proxy_norm.min()` na janela |
+| `bbox_area_per_person_mean` | float | média na janela |
+| `pose_quality_mean` | float | média na janela |
+| `empty_scene_rate`, `dense_scene_rate`, `fallback_rate` | float [0,1] | médias dos booleanos |
+
+### Tabela C — Colunas de linhagem (frames e windows)
+
+| Coluna | Tipo | Descrição |
+| --- | --- | --- |
+| `source_split` | string | `training` ou `testing` |
+| `frame_stride` | int/NaN | stride da extração (do manifesto) |
+| `window_size` | int | tamanho da janela em frames |
+| `pipeline_version` | string | versão do pipeline (atual: `fase4-v1`) |
+| `extraction_timestamp` | string ISO-8601 UTC | timestamp da execução |
+
 ## Rótulos atuais e rótulos planejados
 
 ### ShanghaiTech Campus Dataset

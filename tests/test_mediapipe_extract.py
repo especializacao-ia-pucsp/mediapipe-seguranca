@@ -19,6 +19,7 @@ if str(SRC_DIR) not in sys.path:
 from mediapipe_seguranca import mediapipe_extract  # noqa: E402
 from mediapipe_seguranca.mediapipe_extract import FRAME_SCHEMA, extract_video  # noqa: E402
 
+EXPECTED_SCHEMA = [
     "video_id",
     "frame_index",
     "num_people_detected",
@@ -41,9 +42,7 @@ class _DummyExtractor:
     def __init__(self, *_args: Any, **_kwargs: Any) -> None:
         self.calls = 0
 
-    def extract_frame(
-        self, image_bgr: np.ndarray, prev_gray: np.ndarray | None = None
-    ) -> dict[str, Any]:
+    def extract_frame(self, image_bgr: np.ndarray, prev_gray: np.ndarray | None = None) -> dict[str, Any]:
         self.calls += 1
         return {
             "video_id": "",
@@ -136,11 +135,13 @@ def test_run_extraction_idempotent(tmp_path: Path) -> None:
     def fake_imread(_path: str, *_args: Any, **_kwargs: Any) -> np.ndarray:
         return fake_image
 
-    with patch.object(extract_runner.shanghaitech_loader, "get_train_videos", return_value=video_dirs), \
-         patch.object(extract_runner.shanghaitech_loader, "get_test_videos_with_gt", return_value=[]), \
-         patch.object(extract_runner.shanghaitech_loader, "iter_frames", side_effect=fake_iter_frames), \
-         patch.object(extract_runner, "MediaPipeExtractor", _DummyExtractor), \
-         patch.object(extract_runner.cv2, "imread", side_effect=fake_imread):
+    with patch.object(extract_runner.shanghaitech_loader, "get_train_videos", return_value=video_dirs), patch.object(
+        extract_runner.shanghaitech_loader, "get_test_videos_with_gt", return_value=[]
+    ), patch.object(extract_runner.shanghaitech_loader, "iter_frames", side_effect=fake_iter_frames), patch.object(
+        extract_runner, "MediaPipeExtractor", _DummyExtractor
+    ), patch.object(
+        extract_runner.cv2, "imread", side_effect=fake_imread
+    ):
 
         manifest_first = extract_runner.run_extraction(
             split="training",
@@ -148,9 +149,7 @@ def test_run_extraction_idempotent(tmp_path: Path) -> None:
             output_dir=output_dir,
             model_dir=tmp_path / "models",
         )
-        first_mtimes = {
-            p: p.stat().st_mtime_ns for p in (output_dir / "training").glob("*.parquet")
-        }
+        first_mtimes = {p: p.stat().st_mtime_ns for p in (output_dir / "training").glob("*.parquet")}
 
         manifest_second = extract_runner.run_extraction(
             split="training",
@@ -158,9 +157,7 @@ def test_run_extraction_idempotent(tmp_path: Path) -> None:
             output_dir=output_dir,
             model_dir=tmp_path / "models",
         )
-        second_mtimes = {
-            p: p.stat().st_mtime_ns for p in (output_dir / "training").glob("*.parquet")
-        }
+        second_mtimes = {p: p.stat().st_mtime_ns for p in (output_dir / "training").glob("*.parquet")}
 
     assert len(manifest_first) == 2
     # Manifesto reflete os 2 vídeos após segunda execução também (sem duplicar).

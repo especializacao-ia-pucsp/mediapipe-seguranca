@@ -32,11 +32,14 @@ O roadmap está alinhado ao [Cronograma do Projeto Integrador](CRONOGRAMA.md), q
 No momento, o projeto já possui:
 
 - estrutura base do repositório em Python;
-- pipeline demo executável e pipeline real (`--mode real`) com extração MediaPipe integrada;
-- ingestão real ShanghaiTech validada (Fase 2) e extração visual real validada no SAMPLE/training (Fase 3);
-- testes mínimos para a base inicial e testes específicos para a extração MediaPipe;
+- pipeline demo executável, pipeline real (`--mode real`) e pipeline de consolidação (`--mode processed`) com extração MediaPipe + agregação por janela integradas;
+- ingestão real ShanghaiTech validada (Fase 2), extração visual real validada no SAMPLE/training (Fase 3) e base analítica consolidada em `data/processed/` (Fase 4, 2026-04-25);
+- relatório de qualidade de dados versionado (`data_quality_report.json`, `pipeline_version=fase4-v1`);
+- testes específicos para a extração MediaPipe e para a engenharia de features real (suite total: 15 passed);
 - documentação de arquitetura, entregáveis, dados, notebooks e relatórios;
 - contrato inicial de organização do trabalho acadêmico e técnico.
+
+**Próximo foco**: Fase 5 — Análise Exploratória e Estatística sobre `data/processed/frame_features_real.{parquet,csv}` e `window_features_real.{parquet,csv}`.
 
 ## Visão temporal das fases
 
@@ -76,10 +79,10 @@ gantt
     Fase 3 — Integração com MediaPipe  :done,    f3, 2026-03-30, 2026-04-25
 
     section Preparação de Dados
-    Fase 4 — Base analítica            :active,  f4, 2026-04-26, 2026-05-03
+    Fase 4 — Base analítica            :done,    f4, 2026-04-26, 2026-04-25
 
     section Análise
-    Fase 5 — EDA e estatística         :         f5, 2026-04-06, 2026-04-12
+    Fase 5 — EDA e estatística         :active,  f5, 2026-04-26, 2026-05-02
     Fase 5b — Análise diagnóstica      :         f5b, 2026-04-13, 2026-04-19
 
     section Modelagem
@@ -120,8 +123,8 @@ flowchart TD
     style F1 fill:#4CAF50,color:#fff
     style F2 fill:#4CAF50,color:#fff
     style F3 fill:#4CAF50,color:#fff
-    style F4 fill:#42A5F5,color:#fff
-    style F5 fill:#78909C,color:#fff
+    style F4 fill:#4CAF50,color:#fff
+    style F5 fill:#42A5F5,color:#fff
     style F5B fill:#78909C,color:#fff
     style F6 fill:#78909C,color:#fff
     style F7 fill:#78909C,color:#fff
@@ -275,7 +278,7 @@ flowchart TD
 
 ### Fase 4: consolidação da base analítica
 
-**Status**: em andamento
+**Status**: concluída
 **Cronograma PI**: cobre atividades 72-77 (Tratamento), 80-83 (Processamento), 86-88 (Pipeline), 91-95 (Governança)
 
 #### Objetivos
@@ -298,9 +301,29 @@ flowchart TD
 - atualização do `docs/DICIONARIO_DE_DADOS.md`;
 - validação de qualidade dos dados.
 
+#### Fase 4 Concluída
+
+**Data de conclusão**: 2026-04-25
+
+**Artefatos principais**:
+
+- ✅ **Engenharia de features real**: [src/mediapipe_seguranca/feature_engineering_real.py](../src/mediapipe_seguranca/feature_engineering_real.py) — `build_frame_features`, `aggregate_window_features_real`, `compute_quality_report`, constantes `FRAME_FEATURES_SCHEMA`, `WINDOW_FEATURES_SCHEMA`, `PIPELINE_VERSION = "fase4-v1"`, `DEFAULT_WINDOW_SIZE = 15`.
+- ✅ **Construtor da base processada**: [src/mediapipe_seguranca/build_processed_base.py](../src/mediapipe_seguranca/build_processed_base.py) — `build_processed_base(interim_dir, output_dir, window_size, splits)`.
+- ✅ **Pipeline atualizada**: [src/mediapipe_seguranca/pipeline.py](../src/mediapipe_seguranca/pipeline.py) — `run_processed_base_pipeline`, `run_real_pipeline` agora usa `build_processed_base`, CLI aceita `mode="processed"` e `--window-size`; legado `_adapt_real_frames_to_features` marcado como deprecated.
+- ✅ **CLI estendida**: [main.py](../main.py) e [src/mediapipe_seguranca/__main__.py](../src/mediapipe_seguranca/__main__.py) — suporte a `--mode processed` e `--window-size`.
+- ✅ **Testes**: [tests/test_feature_engineering_real.py](../tests/test_feature_engineering_real.py) (6 testes), [tests/test_pipeline.py](../tests/test_pipeline.py) (+1), fix de sintaxe em [tests/test_mediapipe_extract.py](../tests/test_mediapipe_extract.py). Suite total: **15 passed**.
+- ✅ **Saídas geradas**: [data/processed/frame_features_real.csv](../data/processed/frame_features_real.csv) (20×19), `frame_features_real.parquet`, [data/processed/window_features_real.csv](../data/processed/window_features_real.csv) (8×28), `window_features_real.parquet`, [data/processed/data_quality_report.json](../data/processed/data_quality_report.json) (`pipeline_version=fase4-v1`).
+- ✅ **Notebook executável**: [notebooks/03_feature_engineering.md](../notebooks/03_feature_engineering.md) com 4 figuras em `reports/figures/fase4_*.png`.
+- ✅ **Relatório de validação**: [reports/eda/fase4_validacao_base_processada.md](../reports/eda/fase4_validacao_base_processada.md) (5/5 PASS).
+- ✅ **Dicionário atualizado**: [docs/DICIONARIO_DE_DADOS.md](DICIONARIO_DE_DADOS.md#base-analítica-consolidada-fase-4) com `FRAME_FEATURES_SCHEMA`, `WINDOW_FEATURES_SCHEMA` e colunas de linhagem.
+
+**Achado relevante**: SAMPLE/training segue com `num_people_detected = 0` em todos os frames (limitação herdada da Fase 3). Não é regressão; pipeline está pronta para escalar com dataset expandido (`--split testing` ou modelo `pose_landmarker_full.task`) antes que a Fase 5 entregue EDA com peso analítico real.
+
+**Status**: READY FOR FASE 5 — Análise Exploratória e Estatística
+
 ### Fase 5: análise exploratória e estatística
 
-**Status**: planejada
+**Status**: planejada (próximo foco)
 **Cronograma PI**: cobre seção 4 (Análise Descritiva/Exploratória), atividades 106-118
 
 #### Objetivos
@@ -488,8 +511,10 @@ As prioridades imediatas recomendadas são:
 1. concluir os gates da entrada da Fase 3 (dataset de reforço, vídeos próprios e backlog de features avançadas);
 2. ✅ implementar leitura real de vídeo com integração de extração no `mediapipe_extract.py` (concluído na Fase 3, 2026-04-25);
 3. ✅ conectar MediaPipe à pipeline com rastreabilidade de saídas intermediárias (concluído — `data/interim/mediapipe_frames/` + `_manifest.parquet`);
-4. **(em foco)** gerar a primeira base processada não sintética em `data/processed/` a partir das saídas reais da Fase 3, ampliando para `--split testing` ou modelo `pose_landmarker_full.task` para superar o achado de detecções zeradas no SAMPLE/training;
-5. **(em foco)** evoluir os notebooks restantes para versões executáveis (notebook 02 já concluído na Fase 3; pendentes: 03 a 07).
+4. ✅ gerar a primeira base processada não sintética em `data/processed/` (concluído na Fase 4, 2026-04-25 — `frame_features_real.{parquet,csv}`, `window_features_real.{parquet,csv}`, `data_quality_report.json`);
+5. **(em foco — Fase 5)** executar EDA e análise estatística sobre a base processada e materializar o notebook `04_eda` + figuras em `reports/figures/fase5_*.png`;
+6. ampliar a base para `--split testing` ou modelo `pose_landmarker_full.task` antes da Fase 5 entregar EDA com peso analítico real, superando o achado de detecções zeradas no SAMPLE/training;
+7. evoluir os notebooks restantes para versões executáveis (02 e 03 concluídos; pendentes: 04 a 07).
 
 ## Critério de avanço entre fases
 

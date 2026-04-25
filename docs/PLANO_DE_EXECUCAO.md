@@ -243,13 +243,35 @@ Saídas esperadas:
 
 | Item | Evidência esperada | Status |
 | --- | --- | --- |
-| Features por frame | `feature_engineering.py` gerando features por frame | Planejado |
-| Features por janela | `tracking_features.py` gerando features por janela temporal | Planejado |
-| Base processada | Arquivos em `data/processed/` prontos para análise | Planejado |
-| Notebook de features | Notebook `03_feature_engineering` executável | Planejado |
-| Dicionário atualizado | `docs/DICIONARIO_DE_DADOS.md` com todas as variáveis | Planejado |
-| Pipeline integrada | `pipeline.py` executando fluxo completo de dados reais | Planejado |
-| Qualidade de dados | Validações de completude, tipos e ranges aplicadas | Planejado |
+| Features por frame | [feature_engineering_real.py](../src/mediapipe_seguranca/feature_engineering_real.py) gerando `frame_features_real` (`FRAME_FEATURES_SCHEMA`, 14 colunas + linhagem) | Concluído (Fase 4, 2026-04-25) |
+| Features por janela | `aggregate_window_features_real` produzindo `window_features_real` (`WINDOW_FEATURES_SCHEMA`, janela default 15 frames) | Concluído (Fase 4, 2026-04-25) |
+| Base processada | [data/processed/frame_features_real.{parquet,csv}](../data/processed/frame_features_real.csv) e [window_features_real.{parquet,csv}](../data/processed/window_features_real.csv) prontos para análise | Concluído (Fase 4, 2026-04-25) |
+| Notebook de features | [notebooks/03_feature_engineering.md](../notebooks/03_feature_engineering.md) executável com 4 figuras em `reports/figures/fase4_*.png` | Concluído (Fase 4, 2026-04-25) |
+| Dicionário atualizado | [docs/DICIONARIO_DE_DADOS.md](DICIONARIO_DE_DADOS.md#base-analítica-consolidada-fase-4) com `FRAME_FEATURES_SCHEMA`, `WINDOW_FEATURES_SCHEMA` e linhagem | Concluído (Fase 4, 2026-04-25) |
+| Pipeline integrada | [pipeline.py](../src/mediapipe_seguranca/pipeline.py) com `run_processed_base_pipeline` e CLI `--mode processed --window-size` | Concluído (Fase 4, 2026-04-25) |
+| Qualidade de dados | [data/processed/data_quality_report.json](../data/processed/data_quality_report.json) gerado por `compute_quality_report` (`pipeline_version=fase4-v1`) | Concluído (Fase 4, 2026-04-25) |
+| Suite de testes | 6 testes em [tests/test_feature_engineering_real.py](../tests/test_feature_engineering_real.py) + ajustes em [tests/test_pipeline.py](../tests/test_pipeline.py) e [tests/test_mediapipe_extract.py](../tests/test_mediapipe_extract.py) — suite total 15 passed | Concluído (Fase 4, 2026-04-25) |
+
+### Comandos operacionais validados (Fase 4)
+
+```powershell
+# Construir a base analítica consolidada a partir das saídas da Fase 3
+python main.py --mode processed
+
+# Customizar o tamanho da janela temporal (default = 15 frames)
+python main.py --mode processed --window-size 15
+```
+
+Saídas esperadas:
+
+- `data/processed/frame_features_real.parquet` e `frame_features_real.csv`
+- `data/processed/window_features_real.parquet` e `window_features_real.csv`
+- `data/processed/data_quality_report.json` (`pipeline_version=fase4-v1`)
+- Relatório de validação: [reports/eda/fase4_validacao_base_processada.md](../reports/eda/fase4_validacao_base_processada.md)
+
+### Pendências e ressalvas registradas (Fase 4)
+
+- ⚠️ **SAMPLE/training com detecção zerada**: a base processada gerada na Fase 4 herda a limitação da Fase 3 — `num_people_detected = 0` em todos os frames do SAMPLE/training. Não é regressão: o pipeline está pronto para escalar. Recomendação antes da Fase 5 entregar EDA com peso analítico real: rodar a extração (Fase 3) com dataset expandido (`--split testing`) e/ou substituir por `pose_landmarker_full.task`, depois reexecutar `python main.py --mode processed`.
 
 ---
 
