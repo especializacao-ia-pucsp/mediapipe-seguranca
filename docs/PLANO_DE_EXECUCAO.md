@@ -297,13 +297,29 @@ Saídas esperadas:
 
 | Item | Evidência esperada | Status |
 | --- | --- | --- |
-| Estatística descritiva | Medidas resumo calculadas para todas as variáveis | Planejado |
-| Análise de correlação | Matriz de correlação e heatmap gerados | Planejado |
-| Outliers e missing | Análise de valores atípicos e ausentes documentada | Planejado |
-| Notebook de EDA | Notebook `04_eda` executável com interpretações | Planejado |
-| Gráficos salvos | Figuras em `reports/figures/` reutilizáveis | Planejado |
-| Relatório de EDA | Síntese em `reports/eda/` com achados principais | Planejado |
-| Recomendações | Indicações para modelagem baseadas na EDA | Planejado |
+| Estatística descritiva | Medidas resumo calculadas para todas as variáveis | Concluído (Fase 5, 2026-04-25) |
+| Análise de correlação | Matriz de correlação e heatmap gerados (REAL e DEMO) em `reports/figures/fase5_corr_heatmap_*.png` | Concluído (Fase 5, 2026-04-25) |
+| Outliers e missing | Análise IQR de outliers e valores ausentes documentada no notebook e no relatório | Concluído (Fase 5, 2026-04-25) |
+| Notebook de EDA | [notebooks/04_eda.md](../notebooks/04_eda.md) executável com 12 seções e interpretações (achados F1–F4) | Concluído (Fase 5, 2026-04-25) |
+| Gráficos salvos | 6 figuras em `reports/figures/fase5_*.png` (boxplot, timeline, envelope, hist, 2 heatmaps) | Concluído (Fase 5, 2026-04-25) |
+| Relatório de EDA | [reports/eda/fase5_eda_inicial.md](../reports/eda/fase5_eda_inicial.md) com sumário executivo, achados e limitações honestas | Concluído (Fase 5, 2026-04-25) |
+| Recomendações | Indicações para Fase 6: Caminho A (dataset expandido) ou Caminho B (prova-de-conceito sobre DEMO) | Concluído (Fase 5, 2026-04-25) |
+
+### Achados consolidados (Fase 5)
+
+- **F1**: SAMPLE não permite análise multidimensional — apenas `motion_proxy` apresenta sinal não trivial nas features REAL (4 features com variância > 0 em REAL contra 15 em DEMO).
+- **F2**: `motion_proxy.mean` distingue vídeos: `01_001 = 16.84` (IQR 19.10) vs `01_002 = 14.09` (IQR 8.26).
+- **F3**: pipeline analítico está validado e pronto para receber dataset expandido sem retrabalho estrutural.
+- **F4**: para Fase 6 recomendam-se dois caminhos (ver abaixo).
+
+### Recomendação operacional para Fase 6
+
+- **Caminho A (preferido)**: obter dataset expandido (`pose_landmarker_full.task` ou ShanghaiTech completo) **antes** de modelar, reexecutando `python main.py --mode real --split testing` e em seguida `python main.py --mode processed`. Esse caminho elimina a limitação de detecções zeradas herdada das Fases 3/4.
+- **Caminho B (paralelo)**: rodar clustering (KMeans/DBSCAN) sobre `df_demo` como **PROVA-DE-CONCEITO** metodológica, com label "PROVA-DE-CONCEITO" claro em todos os artefatos gerados. Permite avançar a Fase 6 sem dependência externa do dataset expandido, mas não substitui o Caminho A para conclusões do projeto.
+
+### Ressalva metodológica registrada (Fase 5)
+
+- A base real atual (n=20 frames, 2 vídeos, `num_people_detected = 0` em todos os frames) **não suporta conclusões inferenciais**. Toda análise da Fase 5 trata os achados como diagnóstico de viabilidade do pipeline e indicação para a próxima iteração, não como evidência substantiva sobre comportamento de cena.
 
 ---
 

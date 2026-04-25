@@ -59,9 +59,9 @@ Padronizar a evolução do repositório para que o projeto avance com clareza t�
 | --- | --- | --- | --- |
 | Notebook de feature engineering (Fase 4) | ✅ Notebook executável com 4 figuras de validação da base analítica gerados em `reports/figures/fase4_*.png` (Fase 4, 2026-04-25) | [notebooks/03_feature_engineering.md](../notebooks/03_feature_engineering.md) | Notebook reproduzível conectado à base processada |
 | Relatório de validação da base processada (Fase 4) | ✅ Relatório 5/5 PASS validando a base analítica consolidada (Fase 4, 2026-04-25) | [reports/eda/fase4_validacao_base_processada.md](../reports/eda/fase4_validacao_base_processada.md) | Relatório registrado e referenciado na documentação |
-| EDA | Estatística descritiva, distribuição e correlação | `notebooks/` e `reports/eda/` | Visualizações e interpretação coerentes |
-| Gráficos exploratórios | Heatmaps, boxplots, séries temporais | `reports/figures/` | Gráficos interpretáveis e reutilizáveis |
-| Relatório EDA | Síntese dos achados descritivos | `reports/eda/` | Achados documentados com interpretação |
+| EDA | ✅ Notebook executável com 12 seções: estatística descritiva, análise focada em `motion_proxy`, correlação REAL e DEMO, outliers IQR e achados F1–F4 (Fase 5, 2026-04-25) | [notebooks/04_eda.md](../notebooks/04_eda.md) e [reports/eda/fase5_eda_inicial.md](../reports/eda/fase5_eda_inicial.md) | Visualizações e interpretação coerentes |
+| Gráficos exploratórios | ✅ 6 figuras de EDA: `fase5_motion_boxplot_por_video.png`, `fase5_motion_timeline_frames.png`, `fase5_motion_window_envelope.png`, `fase5_motion_delta_hist.png`, `fase5_corr_heatmap_real.png`, `fase5_corr_heatmap_demo.png` (Fase 5, 2026-04-25) | `reports/figures/` | Gráficos interpretáveis e reutilizáveis |
+| Relatório EDA | ✅ Sumário executivo, estatísticas-chave, limitações honestas da base atual (n=20 frames, 2 vídeos, pessoas zero) e recomendações para Fase 6 (Fase 5, 2026-04-25) | [reports/eda/fase5_eda_inicial.md](../reports/eda/fase5_eda_inicial.md) | Achados documentados com interpretação |
 
 ### Análise diagnóstica
 

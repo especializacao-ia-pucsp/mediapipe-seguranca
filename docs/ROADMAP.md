@@ -34,12 +34,13 @@ No momento, o projeto já possui:
 - estrutura base do repositório em Python;
 - pipeline demo executável, pipeline real (`--mode real`) e pipeline de consolidação (`--mode processed`) com extração MediaPipe + agregação por janela integradas;
 - ingestão real ShanghaiTech validada (Fase 2), extração visual real validada no SAMPLE/training (Fase 3) e base analítica consolidada em `data/processed/` (Fase 4, 2026-04-25);
+- análise exploratória inicial concluída (Fase 5, 2026-04-25) com notebook [04_eda](../notebooks/04_eda.md), relatório [fase5_eda_inicial](../reports/eda/fase5_eda_inicial.md) e 6 figuras em `reports/figures/fase5_*.png`;
 - relatório de qualidade de dados versionado (`data_quality_report.json`, `pipeline_version=fase4-v1`);
 - testes específicos para a extração MediaPipe e para a engenharia de features real (suite total: 15 passed);
 - documentação de arquitetura, entregáveis, dados, notebooks e relatórios;
 - contrato inicial de organização do trabalho acadêmico e técnico.
 
-**Próximo foco**: Fase 5 — Análise Exploratória e Estatística sobre `data/processed/frame_features_real.{parquet,csv}` e `window_features_real.{parquet,csv}`.
+**Próximo foco**: Fase 6 — Modelagem Não Supervisionada, com ressalva metodológica do Caminho A (dataset expandido) vs Caminho B (prova-de-conceito sobre `df_demo`).
 
 ## Visão temporal das fases
 
@@ -82,11 +83,11 @@ gantt
     Fase 4 — Base analítica            :done,    f4, 2026-04-26, 2026-04-25
 
     section Análise
-    Fase 5 — EDA e estatística         :active,  f5, 2026-04-26, 2026-05-02
+    Fase 5 — EDA e estatística         :done,    f5, 2026-04-26, 2026-04-25
     Fase 5b — Análise diagnóstica      :         f5b, 2026-04-13, 2026-04-19
 
     section Modelagem
-    Fase 6 — Não supervisionada        :         f6, 2026-04-13, 2026-04-19
+    Fase 6 — Não supervisionada        :active,  f6, 2026-04-13, 2026-04-19
     Fase 7 — Supervisionada            :         f7, 2026-04-20, 2026-04-26
     Fase 7b — Análise prescritiva      :         f7b, 2026-04-27, 2026-05-03
 
@@ -124,9 +125,9 @@ flowchart TD
     style F2 fill:#4CAF50,color:#fff
     style F3 fill:#4CAF50,color:#fff
     style F4 fill:#4CAF50,color:#fff
-    style F5 fill:#42A5F5,color:#fff
+    style F5 fill:#4CAF50,color:#fff
     style F5B fill:#78909C,color:#fff
-    style F6 fill:#78909C,color:#fff
+    style F6 fill:#42A5F5,color:#fff
     style F7 fill:#78909C,color:#fff
     style F7B fill:#78909C,color:#fff
     style F8 fill:#78909C,color:#fff
@@ -323,7 +324,7 @@ flowchart TD
 
 ### Fase 5: análise exploratória e estatística
 
-**Status**: planejada (próximo foco)
+**Status**: concluída
 **Cronograma PI**: cobre seção 4 (Análise Descritiva/Exploratória), atividades 106-118
 
 #### Objetivos
@@ -342,6 +343,25 @@ flowchart TD
 - gráficos em `reports/figures/`;
 - sínteses em `reports/eda/`;
 - recomendações para modelagem.
+
+#### Fase 5 Concluída
+
+**Data de conclusão**: 2026-04-25
+
+**Artefatos principais**:
+
+- ✅ **Notebook executável**: [notebooks/04_eda.md](../notebooks/04_eda.md) reescrito com 12 seções (setup, carregamento, qualidade, descritivas, análise focada em `motion_proxy` com 4 figuras, heatmap REAL, comparativo REAL vs DEMO + heatmap DEMO, outliers IQR, achados F1–F4, recomendações, próximo passo).
+- ✅ **Relatório standalone**: [reports/eda/fase5_eda_inicial.md](../reports/eda/fase5_eda_inicial.md) com sumário executivo, estatísticas-chave, limitações honestas, achados, recomendações e lista de figuras.
+- ✅ **Figuras** (6 em `reports/figures/`): `fase5_motion_boxplot_por_video.png`, `fase5_motion_timeline_frames.png`, `fase5_motion_window_envelope.png`, `fase5_motion_delta_hist.png`, `fase5_corr_heatmap_real.png`, `fase5_corr_heatmap_demo.png`.
+
+**Achados confirmados via execução**:
+
+- **F1**: SAMPLE não permite análise multidimensional — apenas `motion_proxy` apresenta sinal não trivial nas features REAL.
+- **F2**: `motion_proxy.mean` distingue vídeos: `01_001 = 16.84` (IQR 19.10) vs `01_002 = 14.09` (IQR 8.26).
+- **F3**: pipeline analítico está validado e pronto para receber dataset expandido — 4 features com variância > 0 em REAL contra 15 em DEMO comprovam a capacidade analítica.
+- **F4**: para Fase 6 recomenda-se **Caminho A** (dataset expandido com `pose_landmarker_full.task` ou ShanghaiTech completo) ou **Caminho B** (KMeans/DBSCAN sobre `df_demo` como prova-de-conceito metodológica).
+
+**Status**: READY FOR FASE 6 — Modelagem Não Supervisionada (com ressalva metodológica do Caminho A vs Caminho B)
 
 ### Fase 5b: análise diagnóstica
 
@@ -367,7 +387,7 @@ flowchart TD
 
 ### Fase 6: modelagem não supervisionada
 
-**Status**: planejada
+**Status**: planejada (próximo foco)
 **Cronograma PI**: cobre atividades 130-141 (Análise Preditiva — parte não supervisionada)
 
 #### Objetivos
@@ -512,9 +532,9 @@ As prioridades imediatas recomendadas são:
 2. ✅ implementar leitura real de vídeo com integração de extração no `mediapipe_extract.py` (concluído na Fase 3, 2026-04-25);
 3. ✅ conectar MediaPipe à pipeline com rastreabilidade de saídas intermediárias (concluído — `data/interim/mediapipe_frames/` + `_manifest.parquet`);
 4. ✅ gerar a primeira base processada não sintética em `data/processed/` (concluído na Fase 4, 2026-04-25 — `frame_features_real.{parquet,csv}`, `window_features_real.{parquet,csv}`, `data_quality_report.json`);
-5. **(em foco — Fase 5)** executar EDA e análise estatística sobre a base processada e materializar o notebook `04_eda` + figuras em `reports/figures/fase5_*.png`;
-6. ampliar a base para `--split testing` ou modelo `pose_landmarker_full.task` antes da Fase 5 entregar EDA com peso analítico real, superando o achado de detecções zeradas no SAMPLE/training;
-7. evoluir os notebooks restantes para versões executáveis (02 e 03 concluídos; pendentes: 04 a 07).
+5. ✅ executar EDA e análise estatística sobre a base processada e materializar o notebook `04_eda` + figuras em `reports/figures/fase5_*.png` (concluído na Fase 5, 2026-04-25 — ver [reports/eda/fase5_eda_inicial.md](../reports/eda/fase5_eda_inicial.md));
+6. **(em foco — Fase 6)** decidir entre Caminho A (ampliar a base para `--split testing` ou `pose_landmarker_full.task` antes de modelar) e Caminho B (rodar KMeans/DBSCAN sobre `df_demo` como prova-de-conceito metodológica), conforme recomendação do achado F4 da Fase 5;
+7. evoluir os notebooks restantes para versões executáveis (02, 03 e 04 concluídos; pendentes: 05 a 07).
 
 ## Critério de avanço entre fases
 
