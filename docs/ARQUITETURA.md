@@ -233,6 +233,22 @@ flowchart TD
 
 ---
 
+## Decisões técnicas — Fase 3 (MediaPipe)
+
+A tabela abaixo consolida as decisões técnicas adotadas na Fase 3 para a integração com MediaPipe e a extração de sinais visuais a partir do dataset ShanghaiTech Campus.
+
+| Decisão | Escolha | Justificativa |
+|---|---|---|
+| Task primária | Pose Landmarker (MediaPipe Tasks API) modo IMAGE, num_poses≥4 | Vídeos ShanghaiTech têm múltiplas pessoas em câmera fixa; pose dá pessoa + landmarks num único modelo |
+| Task complementar | Object Detector (EfficientDet-Lite0) filtrando classe `person` | Backup robusto para cenas densas com oclusão; aciona quando pose subdetecta |
+| Modelo .task | `pose_landmarker_lite.task` + `efficientdet_lite0.tflite` em `models/mediapipe/` (ignorado no git) | Lite cabe em CPU; suficiente para 640×480 |
+| Amostragem de frames | Subamostragem por stride configurável (`frame_stride=5` default) | ShanghaiTech ~25 fps; preserva sinal temporal mantendo throughput |
+| Saída intermediária | Parquet por vídeo em `data/interim/mediapipe_frames/{split}/{video_id}.parquet` + `_manifest.parquet` | Colunar, barato, escalável |
+| Modo execução | Flag `mode={"demo","real"}` em `run_pipeline()`, default `demo` | Coexistência com pipeline demo já existente |
+| Motion proxy | Diferença absoluta média de frames consecutivos em escala de cinza | Barato, sem GPU, agregável por janela |
+
+---
+
 ## Fluxo de dados
 
 Os dados percorrem uma cadeia bem definida de diretórios, cada etapa produzindo artefatos intermediários que alimentam a etapa seguinte. O diagrama abaixo detalha esse fluxo com os tipos de arquivo em cada estágio.

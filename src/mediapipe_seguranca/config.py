@@ -12,6 +12,8 @@ class ProjectPaths:
     data_processed: Path
     data_labels: Path
     reports: Path
+    models_mediapipe: Path
+    interim_mediapipe_frames: Path
 
 
 def get_project_paths(root: Path | None = None) -> ProjectPaths:
@@ -24,4 +26,22 @@ def get_project_paths(root: Path | None = None) -> ProjectPaths:
         data_processed=data_dir / "processed",
         data_labels=data_dir / "labels",
         reports=project_root / "reports",
+        models_mediapipe=project_root / "models" / "mediapipe",
+        interim_mediapipe_frames=data_dir / "interim" / "mediapipe_frames",
     )
+
+
+def ensure_directories(paths: ProjectPaths | None = None) -> ProjectPaths:
+    """Create all known directories on disk if missing."""
+    paths = paths or get_project_paths()
+    for attr in (
+        "data_raw",
+        "data_interim",
+        "data_processed",
+        "data_labels",
+        "reports",
+        "models_mediapipe",
+        "interim_mediapipe_frames",
+    ):
+        getattr(paths, attr).mkdir(parents=True, exist_ok=True)
+    return paths

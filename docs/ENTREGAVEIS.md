@@ -36,7 +36,7 @@ Padronizar a evolução do repositório para que o projeto avance com clareza t�
 | Entregável | Status | Descrição | Local previsto | Critério de aceite |
 | --- | --- | --- | --- | --- |
 | Base bruta | ✅ | Estratégia de ingestão e organização do ShanghaiTech Campus (dataset real validado localmente; `SAMPLE/` versionado) | `data/raw/shanghaitech/` | Estrutura documentada, scripts validados e reprodução local definida (Fase 2) |
-| Base intermediária | planejada | Saídas parciais da extração e preparação | `data/interim/` | Arquivos rastreáveis por etapa |
+| Base intermediária | ✅ | Saídas parciais da extração e preparação — parquets por vídeo + `_manifest.parquet` da extração MediaPipe | `data/interim/mediapipe_frames/{split}/` | Arquivos rastreáveis por etapa (Fase 3, 2026-04-25) |
 | Base processada | planejada | Features por frame e por janela | `data/processed/` | Dataset pronto para análise e modelagem |
 | Rótulos | planejado | Classes e anotações de eventos | `data/labels/` | Convenção de rótulos documentada |
 | Priorização de dados por camadas | ✅ | Camada principal oficial: ShanghaiTech Campus; camadas de reforço e de demonstração mantidas como planejamento | `docs/ROADMAP.md`, `docs/PLANO_DE_EXECUCAO.md` | Camada principal concluída e checkpoints de camadas adicionais registrados |
@@ -47,9 +47,9 @@ Padronizar a evolução do repositório para que o projeto avance com clareza t�
 | --- | --- | --- | --- | --- |
 | Pipeline de ingestão | ✅ | Leitura real de vídeo e validação via ShanghaiTechLoader, com suporte a dataset real local e `SAMPLE/` versionado | `src/mediapipe_seguranca/shanghaitech_loader.py` | Execução reproduzível com processo de preparação local documentado e fallback para `SAMPLE/` (Fase 2) |
 | Scripts de download e validação | ✅ | Automação de ingestão e integridade do dataset | `scripts/download_shanghaitech.py`, `scripts/validate_shanghaitech.py` | Scripts validados e documentados (Fase 2) |
-| Extração visual | | Camada de percepção com MediaPipe | `src/mediapipe_seguranca/mediapipe_extract.py` | Features visuais geradas com consistência |
+| Extração visual | ✅ | Camada de percepção com MediaPipe (Pose Landmarker + Object Detector fallback); parquets por vídeo + `_manifest.parquet` em `data/interim/mediapipe_frames/` | [src/mediapipe_seguranca/mediapipe_extract.py](../src/mediapipe_seguranca/mediapipe_extract.py), [src/mediapipe_seguranca/extract_runner.py](../src/mediapipe_seguranca/extract_runner.py), [scripts/download_mediapipe_models.py](../scripts/download_mediapipe_models.py) | Features visuais geradas com consistência (Fase 3, 2026-04-25) |
 | Feature engineering | | Consolidação de atributos analíticos | `src/mediapipe_seguranca/feature_engineering.py` | Features úteis e documentadas |
-| Pipeline orquestradora | | Fluxo completo de dados | `src/mediapipe_seguranca/pipeline.py` | Pipeline executável end-to-end |
+| Pipeline orquestradora | ✅ | Fluxo `--mode demo` e `--mode real` integrando ingestão + extração MediaPipe + agregação por janela | [src/mediapipe_seguranca/pipeline.py](../src/mediapipe_seguranca/pipeline.py), [main.py](../main.py) | Pipeline executável end-to-end com saída validada em [data/processed/window_features_real.csv](../data/processed/window_features_real.csv) (Fase 3, 2026-04-25) |
 
 ### Análise descritiva e exploratória
 

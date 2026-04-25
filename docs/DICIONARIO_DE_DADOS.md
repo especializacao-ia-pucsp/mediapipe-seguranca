@@ -82,6 +82,37 @@ Atualmente, a pipeline base gera uma estrutura sintética que simula a futura ba
 | `anomaly_flag` | inteiro categórico | Indicador de anomalia, com `-1` para anômalo e `1` para padrão esperado. |
 | `anomaly_score` | numérico contínuo | Distância relativa ao risco médio da base. |
 
+## Saídas da extração MediaPipe (Fase 3)
+
+A extração real com MediaPipe está **implementada e populada** desde a conclusão da Fase 3 (2026-04-25). O módulo [src/mediapipe_seguranca/mediapipe_extract.py](../src/mediapipe_seguranca/mediapipe_extract.py) (constante `FRAME_SCHEMA`) e o runner [src/mediapipe_seguranca/extract_runner.py](../src/mediapipe_seguranca/extract_runner.py) produzem arquivos parquet por vídeo em `data/interim/mediapipe_frames/{split}/{video_id}.parquet`, acompanhados de um `_manifest.parquet` consolidando metadados de processamento.
+
+### Colunas por frame (parquet por vídeo)
+
+| Campo | Tipo | Faixa | Descrição |
+| --- | --- | --- | --- |
+| `video_id` | string | — | Identificador do vídeo (ex.: `01_001`). |
+| `frame_index` | int | ≥ 0 | Índice do frame original no vídeo. |
+| `num_people_detected` | int | ≥ 0 | Número de pessoas detectadas no frame (Pose Landmarker ou fallback do Object Detector). |
+| `mean_pose_visibility` | float | [0, 1] | Média da visibilidade dos landmarks de pose detectados; `NaN` se nenhuma pose. |
+| `bbox_area_total` | float | ≥ 0 | Soma das áreas (em pixels²) das bounding boxes derivadas de poses/detecções. |
+| `mean_bbox_area` | float | ≥ 0 | Média das áreas das bboxes; `NaN` se nenhuma. |
+| `motion_proxy` | float | ≥ 0 | Diferença absoluta média entre o frame atual e o anterior em escala de cinza; `0` no primeiro frame. |
+| `detector_fallback_used` | bool | — | `True` se o Object Detector foi acionado como fallback (Pose subdetectou). |
+
+### Colunas do `_manifest.parquet`
+
+| Campo | Tipo | Descrição |
+| --- | --- | --- |
+| `video_id` | string | Identificador do vídeo processado. |
+| `split` | string | Partição do dataset (`training` ou `testing`). |
+| `num_frames_in` | int | Número total de frames originais no vídeo. |
+| `num_frames_processed` | int | Número de frames efetivamente processados após `frame_stride`. |
+| `frame_stride` | int | Passo de subamostragem aplicado (default `5`). |
+| `mean_people` | float | Média de `num_people_detected` ao longo dos frames processados. |
+| `has_gt_mask` | bool | Indica se o vídeo possui ground-truth mask correspondente. |
+| `processing_seconds` | float | Tempo total de processamento do vídeo, em segundos. |
+| `mediapipe_version` | string | Versão do pacote MediaPipe utilizada na extração. |
+
 ## Rótulos atuais e rótulos planejados
 
 ### ShanghaiTech Campus Dataset

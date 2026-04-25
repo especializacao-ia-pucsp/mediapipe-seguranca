@@ -182,13 +182,34 @@ flowchart TD
 
 | Item | Evidência esperada | Status |
 | --- | --- | --- |
-| Vídeos de teste | Amostras em `data/raw/` com metadados documentados | Planejado |
-| Leitura de vídeo | `video_io.py` lendo vídeos reais sem erros | Planejado |
-| Integração MediaPipe | `mediapipe_extract.py` extraindo sinais reais de pose | Planejado |
-| Saídas intermediárias | Arquivos em `data/interim/` rastreáveis | Planejado |
+| Vídeos de teste | Amostras em `data/raw/shanghaitech/` (real local + `SAMPLE/`) com metadados documentados | Concluído (Fase 2) |
+| Leitura de vídeo | `shanghaitech_loader.py` + `video_io.py` lendo vídeos reais sem erros | Concluído (Fase 2) |
+| Integração MediaPipe | [mediapipe_extract.py](../src/mediapipe_seguranca/mediapipe_extract.py) extraindo sinais reais de pose (Pose Landmarker + fallback Object Detector) | Concluído (Fase 3, 2026-04-25) |
+| Saídas intermediárias | Arquivos em `data/interim/mediapipe_frames/{split}/{video_id}.parquet` + `_manifest.parquet` | Concluído (Fase 3, 2026-04-25) |
 | Notebook de ingestão | Notebook `01_ingestao` executável | Planejado |
-| Notebook de extração | Notebook `02_extracao_mediapipe` executável | Planejado |
-| Documentação de colunas | Estrutura de colunas documentada no dicionário | Planejado |
+| Notebook de extração | [notebooks/02_extracao_mediapipe.md](../notebooks/02_extracao_mediapipe.md) executável (4 figuras em `reports/figures/fase3_*.png`) | Concluído (Fase 3, 2026-04-25) |
+| Documentação de colunas | Estrutura de colunas documentada em [DICIONARIO_DE_DADOS.md](DICIONARIO_DE_DADOS.md#saídas-da-extração-mediapipe-fase-3) | Concluído (Fase 3, 2026-04-25) |
+
+### Comandos operacionais validados (Fase 3)
+
+```powershell
+# 1. Baixar modelos MediaPipe (uma vez)
+python scripts/download_mediapipe_models.py
+
+# 2. Executar pipeline real (extração + features por janela)
+python main.py --mode real --split training --limit-videos 2 --frame-stride 5
+```
+
+Saídas esperadas:
+
+- `data/interim/mediapipe_frames/training/<video_id>.parquet`
+- `data/interim/mediapipe_frames/training/_manifest.parquet`
+- `data/processed/window_features_real.csv`
+- Relatório de validação: [reports/eda/fase3_validacao_mediapipe.md](../reports/eda/fase3_validacao_mediapipe.md)
+
+### Pendências e ressalvas registradas (Fase 3)
+
+- ⚠️ **Detecções zeradas no SAMPLE/training**: nos vídeos do SAMPLE de treino, pessoas pequenas/distantes para o `pose_landmarker_lite` resultaram em `num_people_detected = 0` em todos os frames processados. Recomendação para iteração futura (Fase 4): rodar com `--split testing` (cenas com pessoas mais próximas) e/ou substituir por `pose_landmarker_full.task` para validar a sensibilidade do detector antes da consolidação da base analítica.
 
 ### Checkpoints operacionais de dados e escopo
 

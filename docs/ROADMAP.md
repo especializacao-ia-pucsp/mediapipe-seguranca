@@ -32,8 +32,9 @@ O roadmap está alinhado ao [Cronograma do Projeto Integrador](CRONOGRAMA.md), q
 No momento, o projeto já possui:
 
 - estrutura base do repositório em Python;
-- pipeline demo executável;
-- testes mínimos para a base inicial;
+- pipeline demo executável e pipeline real (`--mode real`) com extração MediaPipe integrada;
+- ingestão real ShanghaiTech validada (Fase 2) e extração visual real validada no SAMPLE/training (Fase 3);
+- testes mínimos para a base inicial e testes específicos para a extração MediaPipe;
 - documentação de arquitetura, entregáveis, dados, notebooks e relatórios;
 - contrato inicial de organização do trabalho acadêmico e técnico.
 
@@ -72,10 +73,10 @@ gantt
 
     section Ingestão e Percepção
     Fase 2 — Ingestão real de vídeo    :done,    f2, 2026-03-23, 2026-03-28
-    Fase 3 — Integração com MediaPipe  :         f3, 2026-03-30, 2026-04-05
+    Fase 3 — Integração com MediaPipe  :done,    f3, 2026-03-30, 2026-04-25
 
     section Preparação de Dados
-    Fase 4 — Base analítica            :         f4, 2026-03-30, 2026-04-05
+    Fase 4 — Base analítica            :active,  f4, 2026-04-26, 2026-05-03
 
     section Análise
     Fase 5 — EDA e estatística         :         f5, 2026-04-06, 2026-04-12
@@ -118,8 +119,8 @@ flowchart TD
 
     style F1 fill:#4CAF50,color:#fff
     style F2 fill:#4CAF50,color:#fff
-    style F3 fill:#78909C,color:#fff
-    style F4 fill:#78909C,color:#fff
+    style F3 fill:#4CAF50,color:#fff
+    style F4 fill:#42A5F5,color:#fff
     style F5 fill:#78909C,color:#fff
     style F5B fill:#78909C,color:#fff
     style F6 fill:#78909C,color:#fff
@@ -216,7 +217,7 @@ flowchart TD
 
 ### Fase 3: integração com MediaPipe
 
-**Status**: planejada
+**Status**: concluída
 **Cronograma PI**: cobre atividades 69-77 (Pré-Processamento — Tratamento)
 
 #### Objetivos
@@ -229,6 +230,14 @@ flowchart TD
 
 - Fase 2 concluída;
 - seleção das tasks do MediaPipe mais compatíveis com o problema.
+
+#### Progresso atual (2026-04-25)
+
+- ✅ Fase 2 concluída — ingestão ShanghaiTech validada e loader em produção.
+- ✅ Planejamento detalhado da Fase 3 registrado em [docs/PLANO_DE_EXECUCAO.md](PLANO_DE_EXECUCAO.md).
+- ✅ Implementação da extração real com MediaPipe Tasks API concluída (Pose Landmarker + Object Detector como fallback).
+- ✅ Decisões técnicas consolidadas em [docs/ARQUITETURA.md](ARQUITETURA.md#decisões-técnicas--fase-3-mediapipe).
+- ✅ Esquema de saídas da extração implementado e populado conforme [docs/DICIONARIO_DE_DADOS.md](DICIONARIO_DE_DADOS.md#saídas-da-extração-mediapipe-fase-3).
 
 #### Principais saídas
 
@@ -243,9 +252,30 @@ flowchart TD
 - **Gate D3 — Vídeos próprios/simulados**: registrar escopo, finalidade e restrições da coleta para material de defesa (se aplicável).
 - **Gate F1 — Features avançadas priorizadas**: registrar no dicionário quais features avançadas ficam no backlog da Fase 4.
 
+#### Fase 3 Concluída
+
+**Data de conclusão**: 2026-04-25
+
+**Artefatos principais**:
+
+- ✅ **Código de extração**: [src/mediapipe_seguranca/mediapipe_extract.py](../src/mediapipe_seguranca/mediapipe_extract.py) — `MediaPipeExtractor`, `extract_video`, constante `FRAME_SCHEMA` (preserva `generate_demo_observations`).
+- ✅ **Runner de extração**: [src/mediapipe_seguranca/extract_runner.py](../src/mediapipe_seguranca/extract_runner.py) — `run_extraction(split, frame_stride, limit_videos, output_dir, model_dir, force)`.
+- ✅ **Pipeline orquestradora**: [src/mediapipe_seguranca/pipeline.py](../src/mediapipe_seguranca/pipeline.py) — `run_pipeline(mode="demo"|"real", split, limit_videos, frame_stride)` + `run_real_pipeline`.
+- ✅ **Configuração e CLI**: [src/mediapipe_seguranca/config.py](../src/mediapipe_seguranca/config.py) (paths `models_mediapipe`, `interim_mediapipe_frames`, `ensure_directories()`), [src/mediapipe_seguranca/__main__.py](../src/mediapipe_seguranca/__main__.py) e [main.py](../main.py) com `--mode {demo,real}`, `--split`, `--limit-videos`, `--frame-stride`.
+- ✅ **Script de modelos**: [scripts/download_mediapipe_models.py](../scripts/download_mediapipe_models.py) — baixa `pose_landmarker_lite.task` + `efficientdet_lite0.tflite` em `models/mediapipe/`.
+- ✅ **Testes**: [tests/test_mediapipe_extract.py](../tests/test_mediapipe_extract.py) (4 testes + 1 marker `slow` com skip automático). Suite total: 7 passed, 1 skipped.
+- ✅ **Saídas geradas e validadas** (SAMPLE/training): `data/interim/mediapipe_frames/training/01_001.parquet`, `01_002.parquet` e `_manifest.parquet`; [data/processed/window_features_real.csv](../data/processed/window_features_real.csv).
+- ✅ **Notebook executável**: [notebooks/02_extracao_mediapipe.md](../notebooks/02_extracao_mediapipe.md) com 4 figuras geradas em `reports/figures/fase3_*.png`.
+- ✅ **Relatório de validação**: [reports/eda/fase3_validacao_mediapipe.md](../reports/eda/fase3_validacao_mediapipe.md).
+- ✅ **Dependências adicionadas**: `mediapipe>=0.10.14`, `pyarrow>=15.0` em [requirements.txt](../requirements.txt) (`mediapipe-0.10.33` instalado e validado).
+
+**Achado relevante**: nos vídeos do SAMPLE/training, pessoas pequenas/distantes para o modelo `pose_landmarker_lite` resultaram em `num_people_detected = 0` em todos os frames. Recomendação documentada: testar com `--split testing` ou substituir por `pose_landmarker_full.task` em iteração futura.
+
+**Status**: READY FOR FASE 4 — Consolidação da Base Analítica
+
 ### Fase 4: consolidação da base analítica
 
-**Status**: planejada
+**Status**: em andamento
 **Cronograma PI**: cobre atividades 72-77 (Tratamento), 80-83 (Processamento), 86-88 (Pipeline), 91-95 (Governança)
 
 #### Objetivos
@@ -456,10 +486,10 @@ Quando o projeto tiver gráficos finais, narrativa consolidada e visão clara de
 As prioridades imediatas recomendadas são:
 
 1. concluir os gates da entrada da Fase 3 (dataset de reforço, vídeos próprios e backlog de features avançadas);
-2. implementar leitura real de vídeo com integração de extração no `mediapipe_extract.py`;
-3. conectar MediaPipe à pipeline com rastreabilidade de saídas intermediárias;
-4. gerar a primeira base processada não sintética;
-5. transformar os notebooks planejados em notebooks executáveis.
+2. ✅ implementar leitura real de vídeo com integração de extração no `mediapipe_extract.py` (concluído na Fase 3, 2026-04-25);
+3. ✅ conectar MediaPipe à pipeline com rastreabilidade de saídas intermediárias (concluído — `data/interim/mediapipe_frames/` + `_manifest.parquet`);
+4. **(em foco)** gerar a primeira base processada não sintética em `data/processed/` a partir das saídas reais da Fase 3, ampliando para `--split testing` ou modelo `pose_landmarker_full.task` para superar o achado de detecções zeradas no SAMPLE/training;
+5. **(em foco)** evoluir os notebooks restantes para versões executáveis (notebook 02 já concluído na Fase 3; pendentes: 03 a 07).
 
 ## Critério de avanço entre fases
 

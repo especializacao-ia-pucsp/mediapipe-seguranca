@@ -98,6 +98,10 @@ data/raw/shanghaitech/**/*.tmp
 data/raw/shanghaitech/**/*.part
 data/raw/shanghaitech/**/*.partial
 data/raw/shanghaitech/**/*.download
+
+# MediaPipe models and intermediate extraction artefacts
+models/
+data/interim/mediapipe_frames/
 data/raw/shanghaitech/**/*~
 data/raw/**/*.mp4
 data/raw/**/*.avi
